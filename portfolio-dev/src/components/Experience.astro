@@ -1,0 +1,38 @@
+---
+import ExperienceItem from "./ExperienceItem.astro"
+const EXPERIENCE = [
+    {
+        date: "2023 - Present",
+        title: "Software Engineering Intern",
+        company: "Ascensores SA – OTIS",
+        description:
+        `• Optimized SQL Server views, stored procedures, and functions in production.\n` +
+        `• Integrated REST APIs into SAP ERP and internal systems.\n` +
+        `• Developed RESTful APIs for vendor tools like OfficeTrack (web and mobile).\n` +
+        `• Built incident reporting systems using stored procedures and views.\n` +
+        `• Worked with Angular, C#, React, and Telerik for full-stack development.\n` +
+        `• Created UX/UI prototypes using Angular and Figma.\n` +
+        `• Designed microservice-based architecture for the SISMAN 2.0 project.\n` +
+        `• Implemented secure user access and browsing modules.\n` +
+        `• Collaborated with agile methodologies for internal tool development.`,
+        link: "https://www.linkedin.com/company/ascensores-sa/posts/?feedView=all", 
+    },
+    {
+        date: "2021 - 2024",
+        title: "Tool Automation using Python",
+        company: "Freelance",
+        description:
+        "Automate with executable Python programs for macros, file composition, large data calculations, and financial calculations.",
+    },
+]
+---
+
+<ol class="relative mt-16">
+  {
+    EXPERIENCE.map((experience) => (
+      <li class="">
+        <ExperienceItem {...experience} />
+      </li>
+    ))
+  }
+</ol>

@@ -1,0 +1,50 @@
+---
+import Badge from './Badge.astro';
+import LinkedInIcon from '../components/icons/LinkedIn.astro';
+import MailIcon from '../components/icons/Mail.astro'
+import SocialPill from '../components/SocialPill.astro';
+import GithubIcon from '../components/icons/Github.astro';
+---
+
+<div class="max-w-xl">
+    <div class="flex gap-4 mb-4">
+        <img 
+        class="rounded-full w-12 h-12" 
+        src="https://media.licdn.com/dms/image/v2/D4E03AQFtGJD-IrJ9-g/profile-displayphoto-shrink_200_200/B4EZVEZ3piGgAY-/0/1740609387460?e=1756944000&v=beta&t=37Ryf0n38OE6DAAAMYBUboT-5iJXS9vbja2MKPNHGKY" 
+        alt="fabrizzioPhoto"
+        />
+        <a
+            href="https://www.linkedin.com/in/fabrizzio-castro-047a87221/"
+            target="_blank"
+            rel="noopener"
+            class="flex justify-center items-center"
+        >
+            <Badge>Available to new projects!</Badge>
+        </a>
+    </div>
+    
+    <h1 class="text-5xl font-bold flex flex-row gap-x-4 pb-4">
+        Hi, I'm Fabrizzio
+        
+    </h1>
+    <p
+        class="mt-6 text-xl text-gray-800 dark:[&>strong]:text-blue-200 [&>strong]:text-blue-500 [&>strong]:font-semibold dark:text-gray-300"
+    >
+        I'm a <strong>software engineer</strong> with three years of experience in software development projects using agile methodologies.<br/>
+        I'm a <strong>full-stack developer</strong> focused on frameworks such as React, Angular, and Vue.
+    </p>
+    <nav class="flex flex-wrap gap-4 mt-8">
+        <SocialPill>
+          <MailIcon class="size-6" />
+          fabrizziocastro2612@gmail.com
+        </SocialPill>
+        <SocialPill href="https://linkedin.com/in/midudev">
+          <LinkedInIcon class="size-6" />
+              LinkedIn
+        </SocialPill>
+        <SocialPill href="https://github.com/FabrizCastro">
+        <GithubIcon class="size-6" />
+            Github
+        </SocialPill>
+    </nav>
+</div>

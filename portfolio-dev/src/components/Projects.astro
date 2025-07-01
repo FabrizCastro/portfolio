@@ -1,0 +1,182 @@
+---
+import GitHub from "./icons/Github.astro"
+import React from "./icons/React.astro"
+import Angular from "./icons/Angular.astro"
+import Docker from "./icons/Docker.astro"
+import Vue from "./icons/Vue.astro";
+import SpringBoot from "./icons/SpringBoot.astro";
+import Microservices from "./icons/Microservices.astro";
+import Link from "./icons/Link.astro"
+import AspNet from "./icons/AspNet.astro";
+import Flutter from "./icons/Flutter.astro";
+import MySQL from "./icons/MySQL.astro"
+import Python from "./icons/Python.astro";
+import Cpp from "./icons/Cpp.astro";
+
+import LinkButton from "./LinkButton.astro";
+
+const TAGS = {
+  REACT: {
+    name: "React",
+    class: "bg-[#61DAFB] text-black",
+    icon: React,
+  },
+  DOCKER: {
+    name: "Docker",
+    class: "bg-[#2496ED] text-white",
+    icon: Docker,
+  },
+  ANGULAR: {
+    name: "Angular",
+    class: "bg-[#C3002F] text-white",
+    icon: Angular,
+  },
+  SPRINGBOOT:{
+    name: "SpringBoot",
+    class: "bg-[#6DB33F] text-white",
+    icon: SpringBoot,
+  },
+  ASPNET:{
+    name: ".NET Core",
+    class: "bg-[#682995] text-white",
+    icon: AspNet,
+  },
+  VUE:{
+    name: "Vue",
+    class: "bg-[#41B883] text-white",
+    icon: Vue,
+  },
+  FLUTTER:{
+    name: "Flutter",
+    class: "bg-[#5EC8F8] text-white",
+    icon: Flutter,
+  },
+  MICROSERVICES:{
+    name: "Microservices",
+    class: "bg-[#FF9901] text-white",
+    icon: Microservices,
+  },
+  MYSQL:{
+    name: "MySQL",
+    class: "bg-[#136494] text-white",
+    icon: MySQL,
+  },
+  PYTHON:{
+    name: "Python",
+    class: "bg-[#FFD342] text-white",
+    icon: Python,
+  },
+  // etc.
+}
+
+const PROJECTS = [
+  
+    {
+        title: "Ascensores Tools",
+        description:
+        "It's an application I created while working at Ascensores SA. \nIts goal was to replace the use of Microsoft Office and SharePoint in the company. We were looking for solutions to integrate our tools into a specific software, and the first area we migrated to this tool was the sales department.",
+        image: "",
+        tags: [TAGS.REACT, TAGS.ASPNET, TAGS.MYSQL],
+    },
+    {
+        title: "Redcorp - A business app",
+        description:
+        "Redcorp is a web and mobile platform that offers services to companies that require better organization and communication between employees across different departments, promoting work groups and development efficiency through a social network-like interface. Our target audience is companies looking for a web application to better manage their employee network and workgroup management.",
+        link: "https://redcorp-web-app.web.app/",
+        github: "https://github.com/redcorp-2023-1",
+        image: "/img/redcorp.png",
+        tags: [TAGS.ASPNET, TAGS.VUE,TAGS.MICROSERVICES,TAGS.DOCKER],
+    },
+    {
+        title: "LeadYourWay - An open source software for bicycle rental",
+        description:
+        "It was an application that I made in a startup made up of 5 people. In 4 months we managed to make a web application for bicycle rental, including payments, selection and preview of a bicycle, a business model between a lessor and a lessee.",
+        github: "https://github.com/FabrizCastro/LeadYourWay-OpenSource",
+        image: "",
+        tags: [TAGS.ANGULAR, TAGS.SPRINGBOOT],
+    },
+    {
+        title: "Cyclespace - Mobile Application",
+        description:
+        "It's a mobile app based on the same bike rental business, but with the addition of virtual wallet payment features and the ability to change images using cameras.",
+        github: "https://github.com/FabrizCastro/Cyclescape",
+        image: "",
+        tags: [TAGS.FLUTTER, TAGS.SPRINGBOOT],
+    },
+    {
+        title: "Kitchen-tech - Web App + IOT",
+        description:
+        "It was an application designed for use in a restaurant. Its function was to allow servers to record orders, pay at the register, add customers, and customize consumption, costs, and expenses. The IoT system was responsible for detecting the status of diners throughout their meal, interacting between the statuses of 'Empty Table, Eating, Waiting for Orders, Waiting, Reservation, and Payment Due.'",
+        link:"https://techstudents-sw74.github.io",
+        github: "https://github.com/orgs/Techstudents-SW74/repositories",
+        image: "",
+        tags: [TAGS.VUE, TAGS.SPRINGBOOT,TAGS.MYSQL, TAGS.PYTHON],
+    },
+    {
+        title: "Smart Contracts",
+        description:
+        "It is a appIt was a web application focused on the execution of contracts between companies or people who needed to hire an influencer or media person with a profile created in the application, the transaction was made using SmartContracts, it had to be integrated with Solidity using Ethereum to carry out the transaction, which was invoked by an API, and returned the amount of gas used, as well as the ETH and if the contract was applicable, with a date and the signature of both parties, as well as its specifications.",
+        link:"https://smart-contracts-team.github.io/landing-page/",
+        github: "https://github.com/orgs/Smart-Contracts-Team/repositories",
+        image: "",
+        tags: [TAGS.ANGULAR, TAGS.SPRINGBOOT,TAGS.MYSQL, TAGS.MICROSERVICES],
+    },
+    {
+        title: "Pichangapp",
+        description:
+        "It is still being created as part of my thesis, and is intended to be an intelligent sports venue booking management application using artificial intelligence. It will be used primarily for users as a chatbot integrated with NLP, and for administrators, the AI ​​aims to show suggestions regarding the improvement of court assignments, schedules, key customers, ROI, demand prediction, and interactive smart dashboards.",
+        link:"https://pichangapp.github.io/pichangapp-landing-page/",
+        image: "",
+        tags: [TAGS.REACT, TAGS.SPRINGBOOT,TAGS.MYSQL, TAGS.MICROSERVICES, TAGS.DOCKER, TAGS.PYTHON],
+    },
+  
+]
+---
+
+<div class="flex flex-col gap-y-16">
+  {
+    PROJECTS.map(({ image, title, description, tags, link, github }) => (
+        <article class="flex flex-col space-x-0 space-y-8 group md:flex-row md:space-x-8 md:space-y-0">
+            <div class="w-full md:w-1/2">
+                <div class="relative flex flex-col items-center col-span-6 row-span-5 gap-8 transition duration-500 ease-in-out transform shadow-xl overflow-clip rounded-xl sm:rounded-xl md:group-hover:-translate-y-1 md:group-hover:shadow-2xl lg:border lg:border-gray-800 lg:hover:border-gray-700 lg:hover:bg-gray-800/50">
+                <img alt="Redcorp" class="object-cover object-top w-full h-56 transition duration-500 sm:h-full md:scale-110 md:group-hover:scale-105" loading="lazy" src={image} />
+                </div>
+            </div>
+
+            <div class="w-full md:w-1/2 md:max-w-lg">
+                <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100">
+                {title}
+                </h3>
+                <div class="flex flex-wrap mt-2">
+                    <ul class="flex flex-row mb-2 gap-x-2">
+                        {tags.map((tag) => (
+                        <li>
+                            <span class={`flex items-center gap-x-2 rounded-full text-xs ${tag.class} py-1 px-2`}>
+                                <tag.icon class="size-4" />
+                                {tag.name}
+                            </span>
+                        </li>
+                        ))}
+                    </ul>
+
+                    <div class="mt-2 text-gray-700 dark:text-gray-400">{description}</div>
+                    <footer class="flex items-end justify-start mt-4 gap-x-4">
+                        {github && (
+                            <LinkButton href={github}>
+                            <GitHub class="size-6" />
+                            Code
+                            </LinkButton>
+                        )}
+                        {link && (
+                            <LinkButton href={link}>
+                            <Link class="size-4" />
+                            Preview
+                            </LinkButton>
+                        )}
+                    </footer>
+                </div>
+            </div>
+        </article>
+    ))
+  }
+</div>
