@@ -12,8 +12,8 @@ import Flutter from "./icons/Flutter.astro";
 import MySQL from "./icons/MySQL.astro"
 import Python from "./icons/Python.astro";
 import Cpp from "./icons/Cpp.astro";
-
 import LinkButton from "./LinkButton.astro";
+import "photoswipe/style.css"
 
 const TAGS = {
   REACT: {
@@ -75,7 +75,10 @@ const PROJECTS = [
         title: "Ascensores Tools",
         description:
         "It's an application I created while working at Ascensores SA. \nIts goal was to replace the use of Microsoft Office and SharePoint in the company. We were looking for solutions to integrate our tools into a specific software, and the first area we migrated to this tool was the sales department.",
-        image: "",
+        images: ["/ascensores/loggin.png","/ascensores/home.jpeg","/ascensores/chart.jpeg",
+        "/ascensores/nuevo-1.jpeg","/ascensores/nuevo-2.jpeg","/ascensores/nuevo-3.jpeg",
+        "/ascensores/eliminar.jpeg","/ascensores/constructoras.jpeg","/ascensores/distritos.jpeg",
+      "/ascensores/swagger.jpeg","/ascensores/front-npm.jpeg"],
         tags: [TAGS.REACT, TAGS.ASPNET, TAGS.MYSQL],
     },
     {
@@ -84,7 +87,9 @@ const PROJECTS = [
         "Redcorp is a web and mobile platform that offers services to companies that require better organization and communication between employees across different departments, promoting work groups and development efficiency through a social network-like interface. Our target audience is companies looking for a web application to better manage their employee network and workgroup management.",
         link: "https://redcorp-web-app.web.app/",
         github: "https://github.com/redcorp-2023-1",
-        image: "/img/redcorp.png",
+        images: ["/redcorp/redcorp.png","/redcorp/landingpage-inicio.png",
+        "/redcorp/select.png","/redcorp/login.png","/redcorp/register.png",
+        "/redcorp/home.png","/redcorp/secciones.png","/redcorp/comunicados.png"],
         tags: [TAGS.ASPNET, TAGS.VUE,TAGS.MICROSERVICES,TAGS.DOCKER],
     },
     {
@@ -92,7 +97,8 @@ const PROJECTS = [
         description:
         "It was an application that I made in a startup made up of 5 people. In 4 months we managed to make a web application for bicycle rental, including payments, selection and preview of a bicycle, a business model between a lessor and a lessee.",
         github: "https://github.com/FabrizCastro/LeadYourWay-OpenSource",
-        image: "",
+        images: ["/leadyourway/landing.png"],
+        link:"https://www.youtube.com/watch?v=iAh57LOrm10",
         tags: [TAGS.ANGULAR, TAGS.SPRINGBOOT],
     },
     {
@@ -100,16 +106,16 @@ const PROJECTS = [
         description:
         "It's a mobile app based on the same bike rental business, but with the addition of virtual wallet payment features and the ability to change images using cameras.",
         github: "https://github.com/FabrizCastro/Cyclescape",
-        image: "",
+        images: ["/cyclescape/logo.png"],
         tags: [TAGS.FLUTTER, TAGS.SPRINGBOOT],
     },
     {
         title: "Kitchen-tech - Web App + IOT",
         description:
         "It was an application designed for use in a restaurant. Its function was to allow servers to record orders, pay at the register, add customers, and customize consumption, costs, and expenses. The IoT system was responsible for detecting the status of diners throughout their meal, interacting between the statuses of 'Empty Table, Eating, Waiting for Orders, Waiting, Reservation, and Payment Due.'",
-        link:"https://techstudents-sw74.github.io",
+        link:"https://www.youtube.com/watch?v=rSsDI6MaP-4&t=1s",
         github: "https://github.com/orgs/Techstudents-SW74/repositories",
-        image: "",
+        images: ["/kitchen/1.jpg","/kitchen/MUM3.png","/kitchen/fisico.png","/kitchen/wokwi.jpeg"],
         tags: [TAGS.VUE, TAGS.SPRINGBOOT,TAGS.MYSQL, TAGS.PYTHON],
     },
     {
@@ -118,7 +124,7 @@ const PROJECTS = [
         "It is a appIt was a web application focused on the execution of contracts between companies or people who needed to hire an influencer or media person with a profile created in the application, the transaction was made using SmartContracts, it had to be integrated with Solidity using Ethereum to carry out the transaction, which was invoked by an API, and returned the amount of gas used, as well as the ETH and if the contract was applicable, with a date and the signature of both parties, as well as its specifications.",
         link:"https://smart-contracts-team.github.io/landing-page/",
         github: "https://github.com/orgs/Smart-Contracts-Team/repositories",
-        image: "",
+        images: ["/smart/home1.jpg","/smart/dashboard.png","/smart/services.jpg","smart/eth.png","/smart/data.png"],
         tags: [TAGS.ANGULAR, TAGS.SPRINGBOOT,TAGS.MYSQL, TAGS.MICROSERVICES],
     },
     {
@@ -126,20 +132,68 @@ const PROJECTS = [
         description:
         "It is still being created as part of my thesis, and is intended to be an intelligent sports venue booking management application using artificial intelligence. It will be used primarily for users as a chatbot integrated with NLP, and for administrators, the AI ​​aims to show suggestions regarding the improvement of court assignments, schedules, key customers, ROI, demand prediction, and interactive smart dashboards.",
         link:"https://pichangapp.github.io/pichangapp-landing-page/",
-        image: "",
+        images: ["/pichangapp/image 11.png"],
         tags: [TAGS.REACT, TAGS.SPRINGBOOT,TAGS.MYSQL, TAGS.MICROSERVICES, TAGS.DOCKER, TAGS.PYTHON],
     },
   
 ]
 ---
+<!-- Script del lado cliente -->
+<script>
+  import PhotoSwipeLightbox from "photoswipe/lightbox";
+
+  const galleries = document.querySelectorAll('[id^="gallery-"]');
+
+  galleries.forEach((gallery) => {
+    const lightbox = new PhotoSwipeLightbox({
+      gallery: gallery as HTMLElement, // 👈 cast explícito a HTMLElement
+      children: "a",
+      
+      pswpModule: () => import("photoswipe"),
+    });
+
+    lightbox.init();
+  });
+</script>
 
 <div class="flex flex-col gap-y-16">
   {
-    PROJECTS.map(({ image, title, description, tags, link, github }) => (
+    PROJECTS.map(({ images, title, description, tags, link, github }) => (
         <article class="flex flex-col space-x-0 space-y-8 group md:flex-row md:space-x-8 md:space-y-0">
             <div class="w-full md:w-1/2">
                 <div class="relative flex flex-col items-center col-span-6 row-span-5 gap-8 transition duration-500 ease-in-out transform shadow-xl overflow-clip rounded-xl sm:rounded-xl md:group-hover:-translate-y-1 md:group-hover:shadow-2xl lg:border lg:border-gray-800 lg:hover:border-gray-700 lg:hover:bg-gray-800/50">
-                <img alt="Redcorp" class="object-cover object-top w-full h-56 transition duration-500 sm:h-full md:scale-110 md:group-hover:scale-105" loading="lazy" src={image} />
+                  <!-- Galería con solo la primera imagen visible -->
+                  <div class="w-auto" id={`gallery-${title.replace(/\s+/g, '-')}`}>
+                    <a href={images[0]} data-pswp-width="1600" data-pswp-height="800" target="_blank" rel="noreferrer">
+                      <img
+                        src={images[0]}
+                        class="aspect-video object-contain rounded-md"
+                        loading="lazy"
+                        alt={title}
+                      />
+                    </a>
+
+                    <!-- Ocultar las demás imágenes pero disponibles para PhotoSwipe -->
+                    <div class="hidden">
+                      {images.slice(1).map((img) => (
+                        <a
+                          href={img}
+                          target="_blank"
+                          rel="noreferrer"
+                          data-pswp-width="1600" 
+                          data-pswp-height="800"
+                        >
+                          <img
+                            src={img}
+                            class="aspect-video object-contain rounded-md"
+                            alt=""
+                          />
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+
+                  
                 </div>
             </div>
 
