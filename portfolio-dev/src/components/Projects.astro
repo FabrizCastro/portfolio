@@ -13,7 +13,14 @@ import MySQL from "./icons/MySQL.astro"
 import Python from "./icons/Python.astro";
 import Cpp from "./icons/Cpp.astro";
 import LinkButton from "./LinkButton.astro";
+import Code from "./icons/Code.astro";
+import n8n from "./icons/N8n.astro";
 import "photoswipe/style.css"
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import 'swiper/swiper-bundle.css';
+import 'swiper/element/bundle';
 
 const TAGS = {
   REACT: {
@@ -66,15 +73,31 @@ const TAGS = {
     class: "bg-[#FFD342] text-white",
     icon: Python,
   },
-  // etc.
+  CODE:{
+    name: "Code",
+    class: "bg-[#000000] text-white",
+    icon: Code,
+  },
+  N8N:{
+    name: "n8n",
+    class: "bg-[#FF4A00] text-white",
+    icon: n8n,
+  },
 }
 
 const PROJECTS = [
   
     {
+        title: "N8N Automations",
+        description:
+        "These are automations that connect both with personal files in the cloud and with dynamic APIs from various applications, including Google, SUNAT, and Microsoft. \nAll with the goal of reducing efforts by applying automation to rigorous daily work by integrating business logic with flowcharts that can be automated by modules.\n\nThe first example shows a flow to transform a default XML CFGDATA template to modify its internal values according to information from an Excel file. This is done with the goal of automatically loading the file with all the required values for each addition to an Excel file. These values can then be loaded automatically. \n\nIn the second example, we work for an accounting firm, we obtain the clients' credentials, in order to obtain all their sales and purchase records by period from the SUNAT page using its API, after obtaining all the data from all the clients, we work with personalized reports by client, which are sent to the accounting firm for them to validate and manipulate, all in 2 and a half minutes.",
+        images: ["/n8n/xml-automatization.jpeg","/n8n/xml-response.png","/n8n/fact-ventas-automatization.jpeg","/n8n/factreportresponsegmail.jpeg"],
+        tags: [TAGS.CODE, TAGS.PYTHON, TAGS.N8N],
+    },
+    {
         title: "Ascensores Tools",
         description:
-        "It's an application I created while working at Ascensores SA. \nIts goal was to replace the use of Microsoft Office and SharePoint in the company. We were looking for solutions to integrate our tools into a specific software, and the first area we migrated to this tool was the sales department.",
+        "It's an application I created while working at Ascensores SA. \nIts goal was to replace the use of Microsoft Office and SharePoint in the company. We were looking for solutions to integrate our tools into a specific software, and the first area we migrated to this tool was the sales department.\n\n What is displayed is a customized tray for sales users, analyzed by the necessary data per project. The project also allows for adding and modifying DISTRICTS, OWNERS, and CONSTRUCTION COMPANIES. This project was designed by me and approved by the Systems Management of Ascensores SA.",
         images: ["/ascensores/loggin.png","/ascensores/home.jpeg","/ascensores/chart.jpeg",
         "/ascensores/nuevo-1.jpeg","/ascensores/nuevo-2.jpeg","/ascensores/nuevo-3.jpeg",
         "/ascensores/eliminar.jpeg","/ascensores/constructoras.jpeg","/ascensores/distritos.jpeg",
@@ -139,19 +162,19 @@ const PROJECTS = [
 ]
 ---
 <!-- Script del lado cliente -->
-<script>
+<script is:client type="module">
+  import { register } from 'swiper/element/bundle';
   import PhotoSwipeLightbox from "photoswipe/lightbox";
 
-  const galleries = document.querySelectorAll('[id^="gallery-"]');
+  register();
 
+  const galleries = document.querySelectorAll('[id^="gallery-"]');
   galleries.forEach((gallery) => {
     const lightbox = new PhotoSwipeLightbox({
-      gallery: gallery as HTMLElement, // 👈 cast explícito a HTMLElement
+      gallery: gallery,
       children: "a",
-      
       pswpModule: () => import("photoswipe"),
     });
-
     lightbox.init();
   });
 </script>
@@ -164,34 +187,34 @@ const PROJECTS = [
                 <div class="relative flex flex-col items-center col-span-6 row-span-5 gap-8 transition duration-500 ease-in-out transform shadow-xl overflow-clip rounded-xl sm:rounded-xl md:group-hover:-translate-y-1 md:group-hover:shadow-2xl lg:border lg:border-gray-800 lg:hover:border-gray-700 lg:hover:bg-gray-800/50">
                   <!-- Galería con solo la primera imagen visible -->
                   <div class="w-auto" id={`gallery-${title.replace(/\s+/g, '-')}`}>
-                    <a href={images[0]} data-pswp-width="1600" data-pswp-height="800" target="_blank" rel="noreferrer">
-                      <img
-                        src={images[0]}
-                        class="aspect-video object-contain rounded-md"
-                        loading="lazy"
-                        alt={title}
-                      />
-                    </a>
-
-                    <!-- Ocultar las demás imágenes pero disponibles para PhotoSwipe -->
-                    <div class="hidden">
-                      {images.slice(1).map((img) => (
-                        <a
-                          href={img}
-                          target="_blank"
-                          rel="noreferrer"
-                          data-pswp-width="1600" 
-                          data-pswp-height="800"
-                        >
-                          <img
-                            src={img}
-                            class="aspect-video object-contain rounded-md"
-                            alt=""
-                          />
-                        </a>
+                    <swiper-container
+                      class="mySwiper min-h-[250px]"
+                      navigation="true"
+                      pagination="true"
+                      space-between="10"
+                      slides-per-view="1"
+                    >
+                      {images.map((img,index) => (
+                        <swiper-slide key={index}>
+                          <a
+                            href={img}
+                            target="_blank"
+                            rel="noreferrer"
+                            data-pswp-width="1600"
+                            data-pswp-height="800"
+                          >
+                            <img
+                              src={img}
+                              class="aspect-video object-contain rounded-md"
+                              loading="lazy"
+                              alt={title}
+                            />
+                          </a>
+                        </swiper-slide>
                       ))}
-                    </div>
+                    </swiper-container>
                   </div>
+
 
                   
                 </div>
@@ -202,18 +225,25 @@ const PROJECTS = [
                 {title}
                 </h3>
                 <div class="flex flex-wrap mt-2">
-                    <ul class="flex flex-row mb-2 gap-x-2">
+                    <ul class="flex flex-wrap gap-2 mb-2">
                         {tags.map((tag) => (
-                        <li>
-                            <span class={`flex items-center gap-x-2 rounded-full text-xs ${tag.class} py-1 px-2`}>
-                                <tag.icon class="size-4" />
-                                {tag.name}
-                            </span>
-                        </li>
+                            <li>
+                                <span class={`flex items-center gap-x-2 rounded-full text-xs ${tag.class} py-1 px-2`}>
+                                    <tag.icon class="size-4" />
+                                    {tag.name}
+                                </span>
+                            </li>
                         ))}
                     </ul>
 
-                    <div class="mt-2 text-gray-700 dark:text-gray-400">{description}</div>
+
+                    <div 
+                      class="mt-2 text-gray-700 dark:text-gray-400" 
+                      style="white-space: pre-line;"
+                    >
+                      {description}
+                    </div>
+
                     <footer class="flex items-end justify-start mt-4 gap-x-4">
                         {github && (
                             <LinkButton href={github}>
