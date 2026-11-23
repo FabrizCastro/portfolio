@@ -3,7 +3,12 @@ import SunIcon from "./icons/Sun.astro"
 import MoonIcon from "./icons/Moon.astro"
 import SystemIcon from "./icons/System.astro"
 
-const THEMES = ["Light", "Dark", "System"]
+const es = Astro.props.lang === "es";
+const themes = [
+  { value: "light", label: es ? "Claro" : "Light" },
+  { value: "dark", label: es ? "Oscuro" : "Dark" },
+  { value: "system", label: es ? "Sistema" : "System" },
+];
 ---
 
 <div class="relative ml-1 mr-1">
@@ -12,7 +17,7 @@ const THEMES = ["Light", "Dark", "System"]
     id="theme-toggle-btn"
     class="appearance-none border-none flex hover:scale-125 transition"
   >
-    <span class="sr-only">Choose theme</span>
+    <span class="sr-only">{es ? "Elegir tema" : "Choose theme"}</span>
     <SunIcon id="light" class="theme-toggle-icon size-5 transition-all" />
     <MoonIcon
       id="dark"
@@ -30,9 +35,9 @@ const THEMES = ["Light", "Dark", "System"]
   >
     <ul>
       {
-        THEMES.map((theme) => (
-          <li class="themes-menu-option px-2 py-1.5 cursor-default hover:bg-neutral-400/40 dark:hover:bg-gray-500/50 rounded-sm">
-            {theme}
+        themes.map((theme) => (
+          <li data-theme={theme.value} class="themes-menu-option px-2 py-1.5 cursor-default hover:bg-neutral-400/40 dark:hover:bg-gray-500/50 rounded-sm">
+            {theme.label}
           </li>
         ))
       }
@@ -95,7 +100,8 @@ const THEMES = ["Light", "Dark", "System"]
       (themePreference === "system" && matchMedia.matches)
 
     updateIcon(themePreference)
-    document.documentElement.classList[isDark ? "add" : "remove"]("dark")
+    document.documentElement.classList.toggle("dark", isDark)
+    document.documentElement.dataset.theme = isDark ? "dark" : "light"
   }
 
   updateTheme()
@@ -110,7 +116,7 @@ const THEMES = ["Light", "Dark", "System"]
 
   document.querySelectorAll(".themes-menu-option").forEach((element) => {
     element.addEventListener("click", (e) => {
-      localStorage.setItem("theme", e.target.innerText.toLowerCase().trim())
+      localStorage.setItem("theme", e.currentTarget.dataset.theme)
       updateTheme()
     })
   })

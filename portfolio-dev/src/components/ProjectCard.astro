@@ -1,0 +1,144 @@
+---
+import type { ProjectEntry, ProjectLanguage } from "../projects";
+import ProjectGallery from "./ProjectGallery.astro";
+import GitHub from "./icons/Github.astro";
+import Link from "./icons/Link.astro";
+
+interface Props {
+  entry: ProjectEntry;
+  lang: ProjectLanguage;
+  view?: "grid" | "featured" | "dialog";
+}
+
+const { entry, lang, view = "grid" } = Astro.props;
+const { project, category, id } = entry;
+const { code, date, github, images = [], link, milestones, technologies = [] } = project;
+const es = lang === "es";
+const featured = view === "featured";
+const title = es ? project.titleEs ?? project.title : project.title;
+const description = es ? project.descriptionEs : project.description;
+const summary = featured ? description.split(/(?<=\.)\s/)[0] : description;
+const hasMedia = images.length > 0;
+const showMilestones = milestones?.length && !featured;
+const featureMilestones = featured && !hasMedia && !code && milestones?.length;
+const dateLabel = date && new Intl.DateTimeFormat(lang, {
+  timeZone: "UTC", year: "numeric",
+  ...(date.length >= 7 && { month: "short" }),
+  ...(date.length === 10 && { day: "numeric" }),
+}).format(new Date(date));
+const headingId = `${id}-${view}-title`;
+const Heading = featured ? "h4" : "h3";
+---
+
+<article class:list={["project-card", view, { "has-panel": hasMedia || code || featureMilestones }]}
+  id={view === "grid" ? id : undefined} aria-labelledby={headingId}>
+  {hasMedia && (
+    <div class="project-cover">
+      {featured
+        ? <img src={images[0]} alt={es ? `Captura de ${title}` : `${title} screenshot`} loading="lazy" width="1600" height="900" />
+        : <ProjectGallery {images} {title} {lang} />}
+    </div>
+  )}
+  <div class="project-body">
+    <p class="project-meta">
+      <span>{category}</span>
+      {date && <time datetime={date}>{dateLabel}</time>}
+    </p>
+    <Heading id={headingId} class="project-title">{title}</Heading>
+    <p class="project-description">{summary}</p>
+    {technologies.length > 0 && (
+      <ul class="project-technologies" aria-label={es ? "Tecnologías" : "Technologies"}>
+        {technologies.map((technology) => <li>{es && technology === "Microservices" ? "Microservicios" : technology}</li>)}
+      </ul>
+    )}
+    {showMilestones && (
+      <details class="project-milestones">
+        <summary>{es ? "Hitos del proyecto" : "Project milestones"}</summary>
+        <ul>{milestones.map((milestone) => <li>{milestone[lang]}</li>)}</ul>
+      </details>
+    )}
+    <div class="project-actions">
+      {featured && <a class="project-primary" href={`#${id}`} data-project-open={id}>{es ? "Ver proyecto" : "View project"} <span aria-hidden="true">↗</span></a>}
+      {github && <a href={github} target="_blank" rel="noopener noreferrer"><GitHub />{es ? "Código" : "Code"}</a>}
+      {link && <a href={link} target="_blank" rel="noopener noreferrer"><Link />{es ? "Vista previa" : "Preview"}</a>}
+    </div>
+  </div>
+  {code && (
+    <figure class="project-code">
+      <figcaption>{code.language}</figcaption>
+      <pre tabindex="0" aria-label={es ? "Fragmento de código" : "Code snippet"}><code>{code.source}</code></pre>
+    </figure>
+  )}
+  {featureMilestones && (
+    <div class="featured-milestones">
+      <p>{es ? "Hitos del proyecto" : "Project milestones"}</p>
+      <ul>{milestones.map((milestone) => <li>{milestone[lang]}</li>)}</ul>
+    </div>
+  )}
+</article>
+
+<style>
+  .project-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+    color: var(--c-text-1);
+    border: 1px solid rgb(148 163 184 / 0.29);
+    border-radius: 1rem;
+    background: var(--portfolio-background);
+    overflow: hidden;
+    min-width: 0;
+  }
+  .project-card.grid {
+    height: 100%;
+    scroll-margin-top: 6rem;
+    box-shadow: 0 5px 0 -2px rgb(148 163 184 / 0.22);
+    transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+  }
+  .project-card.grid:hover, .project-card.grid:focus-within {
+    transform: translateY(-3px);
+    box-shadow: 0 9px 0 -4px rgb(148 163 184 / 0.26);
+  }
+  .project-card.grid:active { transform: translateY(1px); box-shadow: none; }
+  .project-card.grid:target { border-color: #be8200; }
+  .project-cover { min-width: 0; }
+  .project-cover > img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: contain; background: rgb(148 163 184 / 0.12); }
+  .project-body { min-width: 0; padding: clamp(1.15rem, 3vw, 2rem); }
+  .project-meta { display: flex; flex-wrap: wrap; gap: 0.35rem 1rem; color: var(--c-text-2); font-size: 0.8rem; }
+  .project-meta span { color: #805700; font-weight: 700; }
+  :global(.dark) .project-meta span { color: #f1bd47; }
+  .project-title { margin-top: 0.5rem; font-size: clamp(1.4rem, 2.5vw, 2rem); font-weight: 700; line-height: 1.1; overflow-wrap: anywhere; }
+  .featured .project-title { font-size: clamp(1.65rem, 4vw, 3rem); letter-spacing: -0.045em; }
+  .project-description { margin-top: 0.8rem; color: var(--c-text-2); line-height: 1.65; }
+  .project-technologies { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.9rem; font-size: 0.76rem; }
+  .project-technologies li { border: 1px solid rgb(148 163 184 / 0.3); border-radius: 0.35rem; padding: 0.2rem 0.5rem; }
+  .project-milestones { margin-top: 1rem; color: var(--c-text-2); font-size: 0.88rem; }
+  .project-milestones summary { cursor: pointer; color: var(--c-text-1); }
+  .project-milestones ul { margin-top: 0.45rem; padding-left: 1.2rem; list-style: disc; }
+  .project-actions:not(:empty) { display: flex; flex-wrap: wrap; gap: 0.4rem 0.9rem; margin-top: 1.15rem; }
+  .project-actions a { display: inline-flex; align-items: center; gap: 0.45rem; min-height: 2.5rem; font-size: 0.85rem; font-weight: 700; }
+  .project-actions a:hover { text-decoration: underline; text-underline-offset: 4px; }
+  .project-actions a :global(svg) { width: 1rem; height: 1rem; }
+  .project-actions .project-primary { padding: 0.45rem 0.85rem; background: var(--c-text-1); color: var(--portfolio-background); border-radius: 0.45rem; }
+  .project-code { min-width: 0; margin: 0 1.15rem 1.15rem; border: 1px solid rgb(148 163 184 / 0.28); border-radius: 0.65rem; background: #111827; color: #e2e8f0; font-family: var(--font-mono, monospace); font-size: 0.8rem; }
+  .project-code figcaption { border-bottom: 1px solid rgb(148 163 184 / 0.28); padding: 0.6rem 0.85rem; color: #f1bd47; }
+  .project-code pre { overflow: auto; max-height: 18rem; padding: 0.85rem; }
+  .featured-milestones { margin: 0 1.15rem 1.15rem; padding: 1rem; background: rgb(148 163 184 / 0.10); border: 1px solid rgb(148 163 184 / 0.22); border-radius: 0.65rem; }
+  .featured-milestones p { font-weight: 700; }
+  .featured-milestones ul { display: grid; gap: 0.5rem; margin-top: 0.6rem; padding-left: 1.15rem; list-style: disc; color: var(--c-text-2); font-size: 0.86rem; }
+  .featured-milestones li::marker { color: #be8200; }
+  .dialog { border: 0; }
+
+  @media (min-width: 700px) {
+    .featured { min-height: 17rem; align-content: center; }
+    .featured.has-panel { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; }
+    .featured .project-body { grid-column: 1; grid-row: 1; }
+    .featured .project-cover, .featured:not(:has(.project-cover)) .project-code, .featured-milestones { grid-column: 2; grid-row: 1; margin: 1rem 1rem 1rem 0; }
+    .featured .project-cover { overflow: hidden; border-radius: 0.65rem; }
+    .featured:has(.project-cover) .project-code { grid-column: 1 / -1; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .project-card.grid { transition: none; }
+    .project-card.grid:hover, .project-card.grid:focus-within, .project-card.grid:active { transform: none; }
+  }
+</style>

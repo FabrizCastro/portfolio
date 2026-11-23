@@ -1,0 +1,88 @@
+---
+import Angular from './icons/Angular.astro';
+import Vue from './icons/Vue.astro';
+import Docker from './icons/Docker.astro';
+import Github from './icons/Github.astro';
+import Microservices from './icons/Microservices.astro';
+import Api from '../assets/skills/api.svg';
+import AstroIcon from '../assets/skills/brand-astro.svg';
+import Aws from '../assets/skills/brand-aws.svg';
+import Figma from '../assets/skills/brand-figma.svg';
+import Firebase from '../assets/skills/brand-firebase.svg';
+import Next from '../assets/skills/brand-nextjs.svg';
+import Python from '../assets/skills/brand-python.svg';
+import React from '../assets/skills/brand-react.svg';
+import TypeScript from '../assets/skills/brand-typescript.svg';
+import Calendar from '../assets/skills/calendar-clock.svg';
+import Desktop from '../assets/skills/device-desktop-code.svg';
+import MobileBuild from '../assets/skills/device-mobile-up.svg';
+import DotNet from '../assets/skills/dotnet.svg';
+import Expo from '../assets/skills/expo.svg';
+import Language from '../assets/skills/language.svg';
+import N8n from '../assets/skills/n8n.svg';
+import PostgreSql from '../assets/skills/postgresql.svg';
+import Rasa from '../assets/skills/rasa.svg';
+import Server from '../assets/skills/server.svg';
+import Target from '../assets/skills/target-arrow.svg';
+import Users from '../assets/skills/users-group.svg';
+
+const es = Astro.props.lang === 'es';
+const groups = [
+  { name: 'Frontend', tools: [
+    { name: 'React', icon: React },
+    { name: 'Angular', icon: Angular },
+    { name: 'Vue', icon: Vue },
+    { name: 'Next.js', icon: Next },
+    { name: 'Astro', icon: AstroIcon },
+    { name: 'TypeScript', icon: TypeScript },
+  ] },
+  { name: es ? 'Backend y datos' : 'Backend and data', tools: [
+    { name: 'C# · ASP.NET Core', icon: DotNet },
+    { name: 'Python', icon: Python },
+    { name: 'SQL Server', icon: Server },
+    { name: 'PostgreSQL', icon: PostgreSql },
+    { name: 'REST APIs', icon: Api },
+    { name: es ? 'Microservicios' : 'Microservices', icon: Microservices },
+  ] },
+  { name: es ? 'IA y automatización' : 'AI and automation', tools: [
+    { name: 'Rasa', icon: Rasa },
+    { name: es ? 'Procesamiento de lenguaje natural' : 'Natural language processing', icon: Language },
+    { name: 'n8n', icon: N8n },
+    { name: es ? 'Tareas programadas' : 'Scheduled jobs', icon: Calendar },
+  ] },
+  { name: es ? 'Gestión de producto y proyectos' : 'Product and project management', tools: [
+    { name: es ? 'Definición de alcance' : 'Scope definition', icon: Target },
+    { name: es ? 'Prototipado en Figma' : 'Figma prototyping', icon: Figma },
+    { name: es ? 'Colaboración ágil' : 'Agile collaboration', icon: Users },
+  ] },
+  { name: es ? 'Desarrollo móvil' : 'Mobile development', tools: [
+    { name: 'React Native', icon: React },
+    { name: 'Expo', icon: Expo },
+    { name: 'EAS Build', icon: MobileBuild },
+  ] },
+  { name: es ? 'Infraestructura y despliegue' : 'Infrastructure and deployment', tools: [
+    { name: 'AWS', icon: Aws },
+    { name: 'Docker', icon: Docker },
+    { name: 'CI/CD · GitHub Actions', icon: Github },
+    { name: es ? 'Máquinas virtuales' : 'Virtual machines', icon: Desktop },
+    { name: 'Firebase Hosting', icon: Firebase },
+  ] },
+];
+---
+
+<dl class="grid gap-x-8 sm:grid-cols-2 lg:grid-cols-3">
+  {groups.map((group) => (
+    <div class="border-t border-slate-400/30 py-5">
+      <dt class="text-lg font-semibold">{group.name}</dt>
+      <dd class="mt-3">
+        <ul class="flex flex-wrap gap-2">
+          {group.tools.map(({ name, icon: Icon }) => (
+            <li class="inline-flex items-center gap-2 rounded-md border border-slate-400/30 px-2.5 py-1.5 text-sm">
+              <span aria-hidden="true" class="size-4 shrink-0 [&>svg]:size-full"><Icon /></span>{name}
+            </li>
+          ))}
+        </ul>
+      </dd>
+    </div>
+  ))}
+</dl>

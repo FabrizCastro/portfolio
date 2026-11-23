@@ -1,5 +1,6 @@
 ---
- const personalImageAlt = "Fabrizzio Castro"
+const es = Astro.props.lang === "es";
+const personalImageAlt = "Fabrizzio Castro"
 ---
 
 <article class="flex flex-col items-center justify-center gap-8 text-gray-700 dark:text-gray-300 md:flex-row">
@@ -7,22 +8,23 @@
     class="[&>p]:mb-4 [&>p>strong]:text-blue-500 dark:[&>p>strong]:text-blue-100 [&>p>strong]:font-normal [&>p>strong]:font-mono text-pretty order-2 md:order-1"
   >
     <p>
+      {es ? <>Soy Fabrizzio, aunque mis amigos me dicen «Bate». Toco batería y empecé a programar en 2021 con PSeInt y C++. Actualmente desarrollo proyectos de integración de información empresarial y <strong>colaboro con equipos de distintas áreas</strong>.</> : <>
       My name is Fabrizzio but my friends call me "Bate", I am a drummer, I started programming since 2021 at PSEINT and C++
       . I am currently developing business information integration projects.  
-      <strong>Collaborating with teams from different areas, maintaining active communication</strong>.
+      <strong>Collaborating with teams from different areas, maintaining active communication</strong>.</>}
     </p>
 
     <p>
+      {es ? <>He diseñado arquitecturas de software para <strong>Ascensores SA</strong> y participado en integraciones con <strong>SAP y OfficeTrack</strong>.</> : <>
       Some of my achievements are designing software architectures for <strong>Ascensores SA</strong>, 
-      participating in integrations of tools from multinational companies such as <strong>SAP and Office Track</strong>.
+      participating in integrations of tools from multinational companies such as <strong>SAP and OfficeTrack</strong>.</>}
     </p>
 
     <p>
-      As a drummer, I currently have a band called <strong><em class="italic"></em>
+      {es ? "Toco batería en la banda" : "I play drums in the band"} <strong>
         <a href="https://www.youtube.com/watch?v=huwlUCRgPe8&list=OLAK5uy_mfTrgO4Ex-3jARgWyz2l2BJ21mqZRxizE">
           Dawey
-        </a></em></strong> in which I actively participate,
-      and we will soon release songs that will have a significant impact on my country.
+        </a></strong>.
     </p>
   </div>
 

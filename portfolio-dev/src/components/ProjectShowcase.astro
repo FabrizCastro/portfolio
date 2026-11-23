@@ -1,0 +1,141 @@
+---
+import "swiper/css";
+import "swiper/css/effect-coverflow";
+import type { ProjectEntry, ProjectLanguage } from "../projects";
+import ProjectCard from "./ProjectCard.astro";
+
+interface Props {
+  entries: ProjectEntry[];
+  lang: ProjectLanguage;
+}
+
+const { entries, lang } = Astro.props;
+const es = lang === "es";
+const id = `${entries[0].id}-showcase`;
+---
+
+<section class="project-showcase" data-project-showcase aria-labelledby={id}>
+  <div class="showcase-heading">
+    <h3 id={id}>{es ? "Proyectos destacados" : "Featured projects"}</h3>
+    {entries.length > 1 && (
+      <div class="showcase-nav">
+        <button type="button" data-project-prev aria-label={es ? "Anterior" : "Previous"}>←</button>
+        <span data-project-position aria-live="polite">1 / {entries.length}</span>
+        <button type="button" data-project-next aria-label={es ? "Siguiente" : "Next"}>→</button>
+      </div>
+    )}
+  </div>
+  <div class="swiper showcase-carousel" tabindex={entries.length > 1 ? 0 : undefined}
+    aria-label={es ? "Carrusel de proyectos" : "Project carousel"}>
+    <div class="swiper-wrapper">
+      {entries.map((entry) => (
+        <div class="swiper-slide"><ProjectCard {entry} {lang} view="featured" /></div>
+      ))}
+    </div>
+  </div>
+  {entries.length > 1 && (
+    <div class="showcase-projects" role="group" aria-label={es ? "Seleccionar proyecto" : "Select a project"}>
+      {entries.map(({ project }, index) => (
+        <button type="button" data-project-select={index} aria-current={index === 0 ? "true" : undefined}>
+          {es ? project.titleEs ?? project.title : project.title}
+        </button>
+      ))}
+    </div>
+  )}
+  {entries.map((entry) => (
+    <dialog data-project-dialog={entry.id} aria-labelledby={`${entry.id}-dialog-title`}>
+      <form method="dialog" class="dialog-controls">
+        <button autofocus aria-label={es ? "Cerrar" : "Close"}>×</button>
+      </form>
+      <ProjectCard {entry} {lang} view="dialog" />
+    </dialog>
+  ))}
+</section>
+
+<style>
+  .project-showcase { margin-bottom: 2.75rem; }
+  .showcase-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem; margin-bottom: 0.8rem; }
+  .showcase-heading h3 { font-size: 1.35rem; font-weight: 700; }
+  .showcase-nav { display: flex; align-items: center; gap: 0.65rem; font-size: 0.8rem; font-variant-numeric: tabular-nums; }
+  .showcase-nav button, .dialog-controls button { min-width: 2.75rem; min-height: 2.75rem; border: 1px solid rgb(148 163 184 / 0.45); border-radius: 0.5rem; font-size: 1.25rem; }
+  .showcase-nav button:hover, .dialog-controls button:hover { background: rgb(148 163 184 / 0.14); }
+  .showcase-carousel { padding: 0.4rem 0 0.8rem; }
+  .showcase-carousel:not(.swiper-initialized) { overflow-x: auto; }
+  .showcase-carousel:not(.swiper-initialized) .swiper-wrapper { gap: 1rem; }
+  .showcase-carousel .swiper-slide { height: auto; }
+  .showcase-carousel .swiper-slide :global(.project-card) { height: 100%; }
+  .showcase-projects { display: flex; flex-wrap: wrap; gap: 0 1rem; }
+  .showcase-projects button { min-height: 2.75rem; padding: 0.3rem 0.1rem; color: var(--c-text-2); font-size: 0.82rem; border-bottom: 2px solid transparent; }
+  .showcase-projects button[aria-current="true"] { border-color: #be8200; color: var(--c-text-1); }
+  dialog { margin: auto; width: min(44rem, calc(100% - 2rem)); max-height: calc(100% - 2rem); overflow: auto; color: var(--c-text-1); background: var(--portfolio-background); border: 1px solid rgb(148 163 184 / 0.45); border-radius: 1rem; }
+  dialog::backdrop { background: rgb(3 7 18 / 0.72); }
+  .dialog-controls { display: flex; justify-content: flex-end; padding: 0.65rem; }
+  @media (min-width: 850px) {
+    .showcase-carousel .swiper-slide { width: 82%; }
+    .showcase-carousel .swiper-slide:only-child { width: 100%; }
+  }
+</style>
+
+<script>
+  import Swiper from "swiper";
+  import { EffectCoverflow } from "swiper/modules";
+
+  document.querySelectorAll<HTMLElement>("[data-project-showcase]").forEach((showcase) => {
+    const viewport = showcase.querySelector<HTMLElement>(".showcase-carousel");
+    const position = showcase.querySelector<HTMLElement>("[data-project-position]");
+    const selectors = Array.from(showcase.querySelectorAll<HTMLButtonElement>("[data-project-select]"));
+    if (!viewport) return;
+
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const carousel = new Swiper(viewport, {
+      modules: [EffectCoverflow],
+      effect: reduced ? "slide" : "coverflow",
+      speed: reduced ? 0 : 380,
+      slidesPerView: reduced ? 1 : "auto",
+      centeredSlides: true,
+      spaceBetween: 16,
+      rewind: true,
+      grabCursor: true,
+      slideToClickedSlide: true,
+      coverflowEffect: { rotate: 17, depth: 120, stretch: 0, slideShadows: false },
+      on: {
+        init(swiper) { syncSlides(swiper); },
+        slideChange(swiper) { syncSlides(swiper); },
+      },
+    });
+
+    function syncSlides(swiper: Swiper) {
+      swiper.slides.forEach((slide, index) => { slide.inert = index !== swiper.activeIndex; });
+      selectors.forEach((button, index) => {
+        if (index === swiper.activeIndex) button.setAttribute("aria-current", "true");
+        else button.removeAttribute("aria-current");
+      });
+      if (position) position.textContent = `${swiper.activeIndex + 1} / ${swiper.slides.length}`;
+    }
+
+    showcase.querySelector("[data-project-prev]")?.addEventListener("click", () => carousel.slidePrev());
+    showcase.querySelector("[data-project-next]")?.addEventListener("click", () => carousel.slideNext());
+    selectors.forEach((button, index) => button.addEventListener("click", () => carousel.slideTo(index)));
+    viewport.addEventListener("keydown", (event) => {
+      if (event.target !== viewport) return;
+      if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+        event.preventDefault();
+        if (event.key === "ArrowLeft") carousel.slidePrev();
+        else carousel.slideNext();
+      }
+    });
+
+    const dialogs = new Map(Array.from(showcase.querySelectorAll<HTMLDialogElement>("[data-project-dialog]"))
+      .map((dialog) => [dialog.dataset.projectDialog, dialog]));
+    showcase.querySelectorAll<HTMLAnchorElement>("[data-project-open]").forEach((link) => {
+      const dialog = dialogs.get(link.dataset.projectOpen);
+      if (!dialog) return;
+      dialog.addEventListener("close", () => link.focus({ preventScroll: true }));
+      link.addEventListener("click", (event) => {
+        if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+        event.preventDefault();
+        dialog.showModal();
+      });
+    });
+  });
+</script>

@@ -1,0 +1,65 @@
+---
+import "photoswipe/style.css";
+
+interface Props {
+  images: string[];
+  title: string;
+  lang: "en" | "es";
+}
+
+const { images, title, lang } = Astro.props;
+---
+
+<div class="project-gallery" data-project-gallery>
+  <swiper-container navigation={images.length > 1 ? "true" : undefined}
+    pagination={images.length > 1 ? "true" : undefined} slides-per-view="1">
+    {images.map((src, index) => (
+      <swiper-slide>
+        <a href={src} data-pswp-width="1600" data-pswp-height="900">
+          <img src={src} alt={lang === "es" ? `Captura ${index + 1} de ${title}` : `${title} screenshot ${index + 1}`}
+            loading="lazy" width="1600" height="900" />
+        </a>
+      </swiper-slide>
+    ))}
+  </swiper-container>
+</div>
+
+<style>
+  .project-gallery {
+    overflow: hidden;
+    background: rgb(148 163 184 / 0.12);
+    --swiper-theme-color: #be8200;
+    --swiper-navigation-size: 1.1rem;
+  }
+  swiper-slide a { display: block; }
+  swiper-slide img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: contain; }
+  swiper-container:not(:defined) swiper-slide:not(:first-child) { display: none; }
+</style>
+
+<script>
+  import { register } from "swiper/element/bundle";
+  import PhotoSwipeLightbox from "photoswipe/lightbox";
+
+  register();
+
+  document.querySelectorAll<HTMLElement>("[data-project-gallery]").forEach((gallery) => {
+    const lightbox = new PhotoSwipeLightbox({
+      gallery,
+      children: "swiper-slide > a",
+      appendToEl: gallery.closest("dialog") ?? undefined,
+      showHideAnimationType: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "none" : "zoom",
+      pswpModule: () => import("photoswipe"),
+    });
+    const updateDimensions = (img: HTMLImageElement) => {
+      const link = img.closest("a");
+      if (!link || !img.naturalWidth) return;
+      link.dataset.pswpWidth = String(img.naturalWidth);
+      link.dataset.pswpHeight = String(img.naturalHeight);
+    };
+    gallery.querySelectorAll("img").forEach((img) => {
+      if (img.complete) updateDimensions(img);
+      else img.addEventListener("load", () => updateDimensions(img), { once: true });
+    });
+    lightbox.init();
+  });
+</script>

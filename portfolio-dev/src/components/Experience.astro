@@ -1,38 +1,48 @@
 ---
-import ExperienceItem from "./ExperienceItem.astro"
-const EXPERIENCE = [
-    {
-        date: "2023 - Present",
-        title: "Software Engineering Intern",
-        company: "Ascensores SA – OTIS",
-        description:
-        `• Optimized SQL Server views, stored procedures, and functions in production.\n` +
-        `• Integrated REST APIs into SAP ERP and internal systems.\n` +
-        `• Developed RESTful APIs for vendor tools like OfficeTrack (web and mobile).\n` +
-        `• Built incident reporting systems using stored procedures and views.\n` +
-        `• Worked with Angular, C#, React, and Telerik for full-stack development.\n` +
-        `• Created UX/UI prototypes using Angular and Figma.\n` +
-        `• Designed microservice-based architecture for the SISMAN 2.0 project.\n` +
-        `• Implemented secure user access and browsing modules.\n` +
-        `• Collaborated with agile methodologies for internal tool development.`,
-        link: "https://www.linkedin.com/company/ascensores-sa/posts/?feedView=all", 
-    },
-    {
-        date: "2021 - 2024",
-        title: "Tool Automation using Python",
-        company: "Freelance",
-        description:
-        "Automate with executable Python programs for macros, file composition, large data calculations, and financial calculations.",
-    },
-]
+import { work } from '../work';
+const lang = Astro.props.lang === 'es' ? 'es' : 'en';
 ---
 
-<ol class="relative mt-16">
-  {
-    EXPERIENCE.map((experience) => (
-      <li class="">
-        <ExperienceItem {...experience} />
-      </li>
-    ))
-  }
+<ol class="work-timeline">
+  {work.map((job) => (
+    <li class="work-entry">
+      <div class="work-role">
+        <h3 class="text-xl font-semibold">{job.company}</h3>
+        <p class="mt-1 text-sm">{job.role[lang]}</p>
+        {job.date && <p class="mt-2 text-sm text-slate-600 dark:text-slate-400">{job.date[lang]}</p>}
+      </div>
+      <div class="work-cases">
+        <p class="text-slate-700 dark:text-slate-300">{job.description[lang]}</p>
+        {job.cases.map((project) => (
+          <article class="work-case">
+            <div>
+              <h4 class="font-semibold">{project.title[lang]}</h4>
+              <p class="mt-1 text-slate-700 dark:text-slate-300">{project.description[lang]}</p>
+            </div>
+            <a class="case-link" href={`#${project.id}`} aria-label={`${lang === 'es' ? 'Ver caso' : 'View case'}: ${project.title[lang]}`}>
+              {lang === 'es' ? 'Ver caso' : 'View case'} <span aria-hidden="true">↗</span>
+            </a>
+          </article>
+        ))}
+      </div>
+    </li>
+  ))}
 </ol>
+
+<style>
+  .work-entry { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1rem; margin-left: .35rem; border-left: 1px solid rgb(148 163 184 / .32); padding: 0 0 2.3rem 1.2rem; position: relative; }
+  .work-entry:last-child { padding-bottom: 0; }
+  .work-entry::before { content: ''; position: absolute; top: .55rem; left: -.3rem; width: .55rem; height: .55rem; border-radius: 50%; background: #d9a71e; }
+  .work-cases { display: grid; gap: .9rem; }
+  .work-case { display: flex; flex-wrap: wrap; align-items: start; justify-content: space-between; gap: .6rem 1rem; }
+  .work-case > div { flex: 1 1 18rem; }
+  .case-link { border: 1px solid rgb(148 163 184 / .42); border-radius: .45rem; padding: .4rem .65rem; font-size: .875rem; }
+  .case-link:hover { border-color: #d9a71e; }
+  @media (min-width: 700px) {
+    .work-entry { grid-template-columns: 13rem minmax(0, 1fr); gap: 2rem; margin-left: 0; padding-left: 0; border-left: 0; }
+    .work-entry::before { left: 12.75rem; }
+    .work-role { padding-right: 1rem; }
+    .work-cases::before { content: ''; position: absolute; border-left: 1px solid rgb(148 163 184 / .32); left: 13rem; top: 1.25rem; bottom: -.35rem; }
+    .work-entry:last-child .work-cases::before { display: none; }
+  }
+</style>

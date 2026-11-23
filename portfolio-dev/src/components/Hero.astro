@@ -1,50 +1,85 @@
 ---
-import Badge from './Badge.astro';
-import LinkedInIcon from '../components/icons/LinkedIn.astro';
-import MailIcon from '../components/icons/Mail.astro'
-import SocialPill from '../components/SocialPill.astro';
-import GithubIcon from '../components/icons/Github.astro';
+import { DevHero } from 'astro-component-kit/sections';
+import 'astro-component-kit/tokens.css';
+
+const es = Astro.props.lang === 'es';
 ---
 
-<div class="max-w-xl">
-    <div class="flex gap-4 mb-4">
-        <img 
-        class="rounded-full w-12 h-12" 
-        src="https://media.licdn.com/dms/image/v2/D4E03AQFtGJD-IrJ9-g/profile-displayphoto-shrink_200_200/B4EZVEZ3piGgAY-/0/1740609387460?e=1756944000&v=beta&t=37Ryf0n38OE6DAAAMYBUboT-5iJXS9vbja2MKPNHGKY" 
-        alt="fabrizzioPhoto"
-        />
-        <a
-            href="https://www.linkedin.com/in/fabrizzio-castro-047a87221/"
-            target="_blank"
-            rel="noopener"
-            class="flex justify-center items-center"
-        >
-            <Badge>Available to new projects!</Badge>
-        </a>
-    </div>
-    
-    <h1 class="text-5xl font-bold flex flex-row gap-x-4 pb-4">
-        Hi, I'm Fabrizzio
-        
-    </h1>
-    <p
-        class="mt-6 text-xl text-gray-800 dark:[&>strong]:text-blue-200 [&>strong]:text-blue-500 [&>strong]:font-semibold dark:text-gray-300"
-    >
-        I'm a <strong>software engineer</strong> with three years of experience in software development projects using agile methodologies.<br/>
-        I'm a <strong>full-stack developer</strong> focused on frameworks such as React, Angular, and Vue.
-    </p>
-    <nav class="flex flex-wrap gap-4 mt-8">
-        <SocialPill>
-          <MailIcon class="size-6" />
-          fabrizziocastro2612@gmail.com
-        </SocialPill>
-        <SocialPill href="https://linkedin.com/in/midudev">
-          <LinkedInIcon class="size-6" />
-              LinkedIn
-        </SocialPill>
-        <SocialPill href="https://github.com/FabrizCastro">
-        <GithubIcon class="size-6" />
-            Github
-        </SocialPill>
-    </nav>
-</div>
+<DevHero
+  className="portfolio-dev-hero"
+  titles={[es
+    ? { base: 'Ingeniería', ext: '', role: 'de software de producto' }
+    : { base: 'Product', ext: '', role: 'Software Engineer' }]}
+  name="Fabrizzio Castro"
+  tagline={es
+    ? 'Soy egresado de Ingeniería de Software de la UPC. Desarrollo aplicaciones internas, diseño arquitecturas e integro sistemas empresariales como SAP y OfficeTrack. Tengo experiencia como Product Software Engineer, soy Founder de una aplicación de gestión de espacios deportivos emergente en Perú, y trabajo como consultor de software para digitalizar negocios.'
+    : 'I’m a Software Engineering graduate from UPC. I build internal applications, design software architecture, and integrate business systems such as SAP and OfficeTrack. I also automate workflows and data processing with Python.'}
+  status={es ? 'Disponible para nuevos proyectos' : 'Available for new projects'}
+  tapeLabel={es ? 'Stack y habilidades' : 'Stack & skills'}
+  background="dots"
+  skills={[
+    { category: 'Frontend', skills: [{ name: 'React', description: es ? 'Desarrollo de interfaces web.' : 'Web interface development.' }, { name: 'Astro', description: es ? 'Sitios web de contenido.' : 'Content-focused websites.' }] },
+    { category: 'Backend', skills: [{ name: '.NET', description: es ? 'APIs e integraciones empresariales.' : 'APIs and business integrations.' }, { name: 'Python', description: es ? 'Procesamiento de datos y automatización.' : 'Data processing and automation.' }] },
+    { category: es ? 'Automatización' : 'Automation', skills: [{ name: 'n8n', description: es ? 'Flujos de trabajo e integración de servicios.' : 'Workflows and service integration.' }] },
+  ]}
+/>
+
+<style is:global>
+  .portfolio-dev-hero.dvhr {
+    min-height: 100svh;
+    position: relative;
+    overflow: hidden;
+    background-color: var(--portfolio-background);
+  }
+
+  .portfolio-dev-hero .dvhr__bg {
+    position: absolute;
+    inset: 0;
+  }
+
+  .portfolio-dev-hero .dvhr__line {
+    font-size: clamp(2.1rem, 5.6vw, 4.5rem);
+  }
+
+  .portfolio-dev-hero .dvhr__tagline {
+    max-width: 47ch;
+    font-family: inherit;
+    font-size: 1rem;
+    line-height: 1.65;
+    letter-spacing: normal;
+    text-transform: none;
+    color: var(--c-text-2);
+  }
+
+  /* DevHero renders a decorative marker in each skill button. */
+  .portfolio-dev-hero .dvhr__pill-mark {
+    width: 1rem;
+    height: 1rem;
+    flex: none;
+    border: 0;
+    border-radius: 0;
+    opacity: 1;
+    background-color: currentColor;
+    mask: var(--skill-icon) center / contain no-repeat;
+  }
+
+  .portfolio-dev-hero [data-name="React"] {
+    --skill-icon: url('../assets/skills/brand-react.svg');
+  }
+
+  .portfolio-dev-hero [data-name="Astro"] {
+    --skill-icon: url('../assets/skills/brand-astro.svg');
+  }
+
+  .portfolio-dev-hero [data-name=".NET"] {
+    --skill-icon: url('../assets/skills/dotnet.svg');
+  }
+
+  .portfolio-dev-hero [data-name="Python"] {
+    --skill-icon: url('../assets/skills/brand-python.svg');
+  }
+
+  .portfolio-dev-hero [data-name="n8n"] {
+    --skill-icon: url('../assets/skills/n8n.svg');
+  }
+</style>

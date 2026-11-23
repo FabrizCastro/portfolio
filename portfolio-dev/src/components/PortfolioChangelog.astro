@@ -1,0 +1,28 @@
+---
+import { ChangelogSection } from 'astro-component-kit/sections';
+
+const es = Astro.props.lang === 'es';
+const releases = [{
+  version: '2026.11',
+  date: '2026-11-23',
+  title: es ? 'Rediseño del portafolio' : 'Portfolio redesign',
+  changes: [
+    { type: 'improved' as const, text: es ? 'Experiencia profesional en una línea de tiempo con enlaces a cada caso.' : 'Work experience timeline with links to each case study.' },
+    { type: 'new' as const, text: es ? 'Portada Dev Hero, stack por especialidad, grilla de proyectos y vitrina 3D.' : 'Dev Hero, stack by specialty, project grid, and 3D showcase.' },
+  ],
+}];
+---
+
+<ChangelogSection
+  title={es ? 'Registro de cambios' : 'Changelog'}
+  subtitle=""
+  subscribe={{ label: es ? "Historial en GitHub" : "History on GitHub", href: "https://github.com/FabrizCastro/portfolio/commits/" }}
+  {releases}
+  variant="timeline"
+  size="sm"
+/>
+
+<style is:global>
+  #changelog .cls__inner { max-width: none; padding-inline: 0; }
+  #changelog .cls__subtitle:empty { display: none; }
+</style>
