@@ -11,7 +11,7 @@ interface Props {
 }
 
 const { entry, lang, view = "grid" } = Astro.props;
-const { project, category, id } = entry;
+const { project, category, company, id } = entry;
 const { code, date, github, images = [], link, milestones, technologies = [] } = project;
 const es = lang === "es";
 const featured = view === "featured";
@@ -42,6 +42,12 @@ const Heading = featured ? "h4" : "h3";
   <div class="project-body">
     <p class="project-meta">
       <span>{category}</span>
+      {company && (
+        <span class="project-company">
+          <img src="/gsitel-logo.png" alt="" width="22" height="22" />
+          {company}
+        </span>
+      )}
       {date && <time datetime={date}>{dateLabel}</time>}
     </p>
     <Heading id={headingId} class="project-title">{title}</Heading>
@@ -104,9 +110,11 @@ const Heading = featured ? "h4" : "h3";
   .project-cover { min-width: 0; }
   .project-cover > img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: contain; background: rgb(148 163 184 / 0.12); }
   .project-body { min-width: 0; padding: clamp(1.15rem, 3vw, 2rem); }
-  .project-meta { display: flex; flex-wrap: wrap; gap: 0.35rem 1rem; color: var(--c-text-2); font-size: 0.8rem; }
+  .project-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem 1rem; color: var(--c-text-2); font-size: 0.8rem; }
   .project-meta span { color: #805700; font-weight: 700; }
   :global(.dark) .project-meta span { color: #f1bd47; }
+  .project-company { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.12rem 0.45rem; border: 1px solid rgb(148 163 184 / 0.45); border-radius: 0.45rem; }
+  .project-company img { border-radius: 0.2rem; background: #fff; }
   .project-title { margin-top: 0.5rem; font-size: clamp(1.4rem, 2.5vw, 2rem); font-weight: 700; line-height: 1.1; overflow-wrap: anywhere; }
   .featured .project-title { font-size: clamp(1.65rem, 4vw, 3rem); letter-spacing: -0.045em; }
   .project-description { margin-top: 0.8rem; color: var(--c-text-2); line-height: 1.65; }

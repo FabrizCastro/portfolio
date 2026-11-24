@@ -1,29 +1,257 @@
 ---
+import 'swiper/css';
+import 'swiper/css/effect-coverflow';
 import { work } from '../work';
+import TitleSection from './TitleSection.astro';
+import WorkCaseCard from './WorkCaseCard.astro';
+
 const lang = Astro.props.lang === 'es' ? 'es' : 'en';
-const cases = work.flatMap((job) => job.cases.map((project) => ({ ...project, company: job.company })));
+const es = lang === 'es';
+const ascensores = 'Ascensores SA – OTIS';
+const cases = work.flatMap(job => job.cases.map(project => ({ ...project, company: job.company })));
+const companies = [...new Set(cases.map(project => project.company))]
+  .sort((a, b) => Number(b === ascensores) - Number(a === ascensores));
 ---
 
-<div class="grid gap-6 md:grid-cols-2">
-  {cases.map((project) => (
-    <article id={project.id} class="scroll-mt-24 rounded-xl border border-slate-400/30 p-5 target:border-amber-500">
-      <p class="text-sm text-slate-600 dark:text-slate-400">{project.company} · {project.type[lang]}</p>
-      <h3 class="mt-2 text-xl font-semibold">{project.title[lang]}</h3>
-      <p class="mt-2 text-slate-700 dark:text-slate-300">{project.description[lang]}</p>
-      {project.technologies.length > 0 && (
-        <ul class="mt-4 flex flex-wrap gap-2" aria-label={lang === 'es' ? 'Tecnologías' : 'Technologies'}>
-          {project.technologies.map((technology) => <li class="rounded-md border border-slate-400/30 px-2 py-1 text-sm">{technology}</li>)}
-        </ul>
-      )}
-      {'images' in project && project.images && (
-        <div class="mt-4 grid grid-cols-3 gap-2">
-          {project.images.map((image, index) => (
-            <a href={image} aria-label={lang === 'es' ? `Abrir captura ${index + 1}` : `Open screenshot ${index + 1}`}>
-              <img src={image} alt="" class="aspect-video w-full rounded-md object-cover object-top" loading="lazy" />
-            </a>
+<section id="work-cases" data-section="work-cases" class="section work-showcase scroll-m-20">
+  <div class="work-header">
+    <div class="work-heading container mx-auto max-w-6xl">
+      <TitleSection className="!mb-0">{es ? 'Casos de trabajo' : 'Work case studies'}</TitleSection>
+      <div class="work-controls" data-work-controls hidden>
+        <div class="company-tabs" role="tablist" aria-label={es ? 'Empresa' : 'Company'}>
+          {companies.map((company, index) => (
+            <button type="button" role="tab" id={`work-tab-${index}`} aria-controls={`work-panel-${index}`} aria-selected={index === 0} tabindex={index === 0 ? 0 : -1}>
+              {company === ascensores ? 'Ascensores' : company}
+            </button>
           ))}
         </div>
-      )}
-    </article>
+        <div class="work-navigation" role="group" aria-label={es ? 'Navegación de casos' : 'Case navigation'}>
+          <button type="button" data-work-prev aria-label={es ? 'Caso anterior' : 'Previous case'} disabled>
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m7 7-7-7 7-7" /></svg>
+          </button>
+          <span data-work-position aria-live="polite" aria-atomic="true"></span>
+          <button type="button" data-work-next aria-label={es ? 'Caso siguiente' : 'Next case'}>
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-7-7 7 7-7 7" /></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {companies.map((company, index) => (
+    <div id={`work-panel-${index}`} data-work-panel>
+      <div class="swiper work-track" tabindex="0" role="group" aria-label={es ? `Casos de ${company}` : `Cases from ${company}`}>
+        <div class="swiper-wrapper">
+          {cases.filter(project => project.company === company).map(project => (
+            <div class="swiper-slide"><WorkCaseCard {project} {company} {lang} /></div>
+          ))}
+        </div>
+      </div>
+    </div>
   ))}
-</div>
+</section>
+
+<style>
+  .work-showcase {
+    margin-inline: -1rem;
+  }
+
+  .work-header { padding-inline: 1rem; }
+
+  .work-heading {
+    display: grid;
+    align-items: center;
+    gap: .75rem 1rem;
+  }
+
+  .work-navigation, .company-tabs { display: flex; align-items: center; }
+  .work-controls { display: contents; }
+  .work-controls[hidden], [data-work-panel][hidden] { display: none; }
+  .company-tabs {
+    justify-self: center;
+    max-width: 100%;
+    padding: .25rem;
+    gap: .25rem;
+    border-radius: .75rem;
+    background: #e7e8f0;
+    color: #475569;
+  }
+
+  .company-tabs button {
+    min-height: 2.75rem;
+    padding: .35rem .8rem;
+    border-radius: .5rem;
+    font-size: .875rem;
+    font-weight: 600;
+  }
+
+  .company-tabs button[aria-selected='true'] { color: #202b3a; background: #fff; box-shadow: 0 1px 3px rgb(18 31 50 / .14); }
+  :global(.dark) .company-tabs { background: #1b2638; color: #c6d1df; }
+  :global(.dark) .company-tabs button[aria-selected='true'] { color: #fff; background: #35445c; }
+
+  .work-navigation { gap: .5rem; justify-self: end; }
+  .work-navigation button {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border: 1px solid rgb(100 116 139 / .55);
+    border-radius: .5rem;
+  }
+
+  .work-navigation button:disabled { opacity: .38; }
+  .work-navigation button:not(:disabled):hover, .company-tabs button[aria-selected='false']:hover { background: rgb(100 116 139 / .14); }
+  .work-navigation span { min-width: 3ch; text-align: center; font-size: .875rem; font-variant-numeric: tabular-nums; }
+  .work-showcase button:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+
+  .work-track {
+    padding-block: 1rem 1.5rem;
+  }
+
+  .work-track:not(.swiper-initialized) {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+  }
+
+  .work-track:not(.swiper-initialized) > .swiper-wrapper { gap: 1rem; padding-inline: 1rem; }
+  .work-track > .swiper-wrapper > .swiper-slide { height: auto; width: calc(100% - 2.5rem); scroll-snap-align: center; }
+  .work-track > .swiper-wrapper > .swiper-slide:only-child { width: calc(100% - 2rem); }
+  .work-track:focus-visible { outline: 2px solid currentColor; outline-offset: -2px; }
+
+  @media (max-width: 480px) {
+    .company-tabs button { padding-inline: .55rem; }
+  }
+
+  @media (min-width: 850px) {
+    .work-track > .swiper-wrapper > .swiper-slide { width: max(39rem, 57.4%); }
+    .work-track > .swiper-wrapper > .swiper-slide:only-child { width: min(max(39rem, 57.4%), 50.4rem); }
+  }
+
+  @media (min-width: 1024px) {
+    .work-heading { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); }
+  }
+</style>
+
+<script>
+  import Swiper from 'swiper';
+  import { EffectCoverflow } from 'swiper/modules';
+
+  const showcase = document.querySelector<HTMLElement>('#work-cases');
+  const controls = showcase?.querySelector<HTMLElement>('[data-work-controls]');
+  const tabs = Array.from(showcase?.querySelectorAll<HTMLButtonElement>('[role="tab"]') ?? []);
+  const panels = Array.from(showcase?.querySelectorAll<HTMLElement>('[data-work-panel]') ?? []);
+  const previous = showcase?.querySelector<HTMLButtonElement>('[data-work-prev]');
+  const next = showcase?.querySelector<HTMLButtonElement>('[data-work-next]');
+  const position = showcase?.querySelector<HTMLElement>('[data-work-position]');
+
+  if (controls && previous && next && position && tabs.length) {
+    const navigation = { previous, next, position };
+    const carousels = new Map<number, Swiper>();
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let company = 0;
+
+    function sync(swiper: Swiper) {
+      swiper.slides.forEach((slide, index) => {
+        slide.querySelector('article')?.toggleAttribute('inert', index !== swiper.activeIndex);
+      });
+      const count = swiper.slides.length;
+      const label = `${swiper.activeIndex + 1} / ${count}`;
+      if (navigation.position.textContent !== label) navigation.position.textContent = label;
+      navigation.previous.disabled = count < 2;
+      navigation.next.disabled = count < 2;
+    }
+
+    function select(index: number) {
+      company = index;
+      tabs.forEach((tab, i) => {
+        const selected = i === index;
+        tab.setAttribute('aria-selected', String(selected));
+        tab.tabIndex = selected ? 0 : -1;
+        panels[i].hidden = !selected;
+      });
+
+      const existing = carousels.get(index);
+      if (existing) {
+        existing.update();
+        sync(existing);
+        return existing;
+      }
+
+      const track = panels[index].querySelector<HTMLElement>('.work-track')!;
+      const multiple = track.querySelectorAll(':scope > .swiper-wrapper > .swiper-slide').length > 1;
+      const carousel = new Swiper(track, {
+        modules: [EffectCoverflow],
+        effect: reduced ? 'slide' : 'coverflow',
+        speed: reduced ? 0 : 380,
+        slidesPerView: 'auto',
+        centeredSlides: true,
+        spaceBetween: 16,
+        autoHeight: true,
+        rewind: true,
+        allowTouchMove: multiple,
+        grabCursor: multiple,
+        slideToClickedSlide: true,
+        noSwipingSelector: '[data-work-media], [data-work-commands]',
+        coverflowEffect: { rotate: 17, depth: 120, stretch: 0, slideShadows: false },
+        on: {
+          init: sync,
+          slideChange(swiper) {
+            if (index === company) sync(swiper);
+          },
+        },
+      });
+      carousels.set(index, carousel);
+      return carousel;
+    }
+
+    function move(step: number) {
+      const carousel = carousels.get(company);
+      if (step < 0) carousel?.slidePrev();
+      else carousel?.slideNext();
+    }
+
+    function openLinkedCase() {
+      const card = document.getElementById(window.location.hash.slice(1));
+      const panel = card?.closest<HTMLElement>('[data-work-panel]');
+      const slide = card?.closest<HTMLElement>('.swiper-slide');
+      if (!panel || !slide) return;
+
+      const carousel = select(panels.indexOf(panel));
+      carousel.slideTo(carousel.slides.indexOf(slide), 0);
+      showcase?.scrollIntoView({ block: 'start' });
+    }
+
+    tabs.forEach((tab, index) => {
+      tab.addEventListener('click', () => select(index));
+      tab.addEventListener('keydown', event => {
+        const destinations: Record<string, number> = {
+          ArrowLeft: (index + tabs.length - 1) % tabs.length,
+          ArrowRight: (index + 1) % tabs.length,
+          Home: 0,
+          End: tabs.length - 1,
+        };
+        const destination = destinations[event.key];
+        if (typeof destination !== 'number') return;
+        event.preventDefault();
+        select(destination);
+        tabs[destination].focus();
+      });
+
+      panels[index].setAttribute('role', 'tabpanel');
+      panels[index].setAttribute('aria-labelledby', tab.id);
+      const track = panels[index].querySelector<HTMLElement>('.work-track');
+      track?.addEventListener('keydown', event => {
+        if (event.target !== track || (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight')) return;
+        event.preventDefault();
+        move(event.key === 'ArrowLeft' ? -1 : 1);
+      });
+    });
+
+    previous.addEventListener('click', () => move(-1));
+    next.addEventListener('click', () => move(1));
+    window.addEventListener('hashchange', openLinkedCase);
+    controls.hidden = false;
+    select(0);
+    openLinkedCase();
+  }
+</script>

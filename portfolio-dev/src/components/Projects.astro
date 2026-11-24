@@ -6,18 +6,19 @@ import ProjectShowcase from "./ProjectShowcase.astro";
 
 interface Props {
   lang?: ProjectLanguage;
-  group?: ProjectGroup;
 }
 
-const { lang = "en", group = "personal" } = Astro.props;
+const { lang = "en" } = Astro.props;
 const es = lang === "es";
-const entries: ProjectEntry[] = projects[group].map((project, index) => ({
+const groups: ProjectGroup[] = ["personal", "gsitel"];
+const entries: ProjectEntry[] = groups.flatMap((group) => projects[group].map((project, index) => ({
   project,
   id: `${group}-project-${index}`,
-  category: group === "gsite" ? "GSITEL" : project.category === "automation"
+  company: group === "gsitel" ? "GSITEL" : undefined,
+  category: project.category === "automation"
     ? (es ? "Automatización" : "Automation")
     : (es ? "Aplicaciones" : "Applications"),
-}));
+})));
 const featured = entries.filter(({ project }) => project.featured);
 ---
 

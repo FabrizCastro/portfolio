@@ -1,0 +1,93 @@
+---
+interface Props {
+  commands: string[];
+  lang: 'es' | 'en';
+}
+
+const { commands, lang } = Astro.props;
+const es = lang === 'es';
+const terminal = commands.length > 2;
+const label = es ? 'Comandos de ejemplo' : 'Example commands';
+---
+
+<div class:list={['work-commands', { 'work-terminal': terminal }]} data-work-commands role="group" aria-label={label}>
+  <p class="commands-heading">
+    {terminal && <span class="terminal-lights" aria-hidden="true"><i></i><i></i><i></i></span>}
+    {terminal ? `Terminal · ${label}` : label}
+  </p>
+  <ul>
+    {commands.map(command => (
+      <li>
+        <span class="prompt" aria-hidden="true">$</span><code>{command}</code>
+        <button type="button" data-copy-command={command} aria-label={es ? `Copiar ${command}` : `Copy ${command}`} hidden>
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.75"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2" /><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" /></svg>
+        </button>
+      </li>
+    ))}
+  </ul>
+  <p class="copy-status" role="status" data-copy-status></p>
+</div>
+
+<style>
+  .work-commands {
+    --command-border: rgb(126 153 190 / .27);
+    --command-surface: #101827;
+    --command-ink: #e7edf7;
+    min-width: 0;
+  }
+
+  .commands-heading { margin-bottom: .45rem; font-size: .8125rem; font-weight: 600; }
+  .work-commands ul { display: grid; gap: .4rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr)); }
+  .work-commands li {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: .6rem;
+    padding: .15rem .25rem .15rem .7rem;
+    min-height: 2.75rem;
+    border: 1px solid var(--command-border);
+    border-radius: .5rem;
+    background: var(--command-surface);
+    color: var(--command-ink);
+  }
+
+  code, .prompt { font-size: .8125rem; line-height: 1.45; font-family: ui-monospace, Consolas, monospace; }
+  code { overflow-wrap: anywhere; }
+  .prompt { color: #e9ba53; }
+  button { display: grid; place-items: center; width: 2.75rem; height: 2.75rem; border-radius: .4rem; }
+  button[hidden] { display: none; }
+  button:hover { background: #263750; }
+  button:focus-visible { outline: 2px solid #9bcdff; outline-offset: -2px; }
+  .copy-status { margin-top: .35rem; font-size: .8125rem; }
+  .copy-status:empty { margin: 0; }
+
+  .work-terminal { background: var(--command-surface); color: var(--command-ink); border: 1px solid var(--command-border); border-radius: .65rem; }
+  .work-terminal .commands-heading { display: flex; align-items: center; gap: .65rem; padding: .55rem .8rem; border-bottom: 1px solid var(--command-border); color: #c3cfe2; }
+  .terminal-lights { display: flex; gap: .25rem; }
+  .terminal-lights i { width: .4rem; height: .4rem; border-radius: 50%; background: #667995; }
+  .work-terminal ul { gap: 0; grid-template-columns: 1fr; }
+  .work-terminal li { border: 0; }
+  .work-terminal .copy-status:not(:empty) { padding: 0 .8rem .55rem; }
+</style>
+
+<script>
+  const spanish = document.documentElement.lang === 'es';
+
+  document.querySelectorAll<HTMLElement>('[data-work-commands]').forEach(group => {
+    const status = group.querySelector('[data-copy-status]');
+    if (!status) return;
+
+    group.querySelectorAll<HTMLButtonElement>('[data-copy-command]').forEach(button => {
+      button.hidden = false;
+      button.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(button.dataset.copyCommand ?? '');
+          status.textContent = spanish ? 'Comando copiado' : 'Command copied';
+        } catch {
+          status.textContent = spanish ? 'Selecciona el comando para copiarlo' : 'Select the command to copy it';
+        }
+      });
+    });
+  });
+</script>

@@ -3,7 +3,6 @@ import Layout from '../layouts/Layout.astro';
 import SectionContainer from './SectionContainer.astro';
 import Hero from './Hero.astro';
 import Stack from './Stack.astro';
-import PortfolioChangelog from './PortfolioChangelog.astro';
 import Experience from './Experience.astro';
 import WorkCases from './WorkCases.astro';
 import Projects from './Projects.astro';
@@ -30,31 +29,16 @@ const es = lang === 'es';
         <Experience {lang} />
       </SectionContainer>
 
-      <SectionContainer id="work-cases">
-        <TitleSection>{es ? 'Casos de trabajo' : 'Work case studies'}</TitleSection>
-        <WorkCases {lang} />
-      </SectionContainer>
+      <WorkCases {lang} />
 
       <SectionContainer id="projects">
-        <TitleSection><CodeIcon class="size-7" />{es ? 'Proyectos propios' : 'Personal projects'}</TitleSection>
+        <TitleSection><CodeIcon class="size-7" />{es ? 'Proyectos' : 'Projects'}</TitleSection>
         <Projects {lang} />
       </SectionContainer>
 
       <SectionContainer id="stack">
         <TitleSection>{es ? 'Stack y habilidades' : 'Stack & skills'}</TitleSection>
         <Stack {lang} />
-      </SectionContainer>
-
-      <SectionContainer id="gsitel">
-        <TitleSection><CodeIcon class="size-7" />{es ? 'Proyectos de GSITEL' : 'GSITEL projects'}</TitleSection>
-        <p class="mb-8 text-gray-700 dark:text-gray-300">
-          {es ? 'Proyectos de GSITEL, mi empresa.' : 'Projects from GSITEL, my company.'}
-        </p>
-        <Projects {lang} group="gsitel" />
-      </SectionContainer>
-
-      <SectionContainer id="changelog">
-        <PortfolioChangelog {lang} />
       </SectionContainer>
 
       <SectionContainer id="about-me">

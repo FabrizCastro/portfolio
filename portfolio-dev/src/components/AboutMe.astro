@@ -8,16 +8,15 @@ const personalImageAlt = "Fabrizzio Castro"
     class="[&>p]:mb-4 [&>p>strong]:text-blue-500 dark:[&>p>strong]:text-blue-100 [&>p>strong]:font-normal [&>p>strong]:font-mono text-pretty order-2 md:order-1"
   >
     <p>
-      {es ? <>Soy Fabrizzio, aunque mis amigos me dicen «Bate». Toco batería y empecé a programar en 2021 con PSeInt y C++. Actualmente desarrollo proyectos de integración de información empresarial y <strong>colaboro con equipos de distintas áreas</strong>.</> : <>
-      My name is Fabrizzio but my friends call me "Bate", I am a drummer, I started programming since 2021 at PSEINT and C++
-      . I am currently developing business information integration projects.  
-      <strong>Collaborating with teams from different areas, maintaining active communication</strong>.</>}
+      {es
+        ? 'Mis amigos me dicen Bate. Empecé a programar en 2021 con PSeInt y C++. Una de las partes que más disfruto de mi trabajo es sentarme con un cliente, entender cómo trabaja y escribir yo mismo los requerimientos. A partir de ahí ordeno el backlog y decido qué conviene construir primero.'
+        : 'My friends call me Bate. I started programming in 2021 with PSeInt and C++. One part of my work I especially enjoy is sitting down with a client, understanding how they work, and writing the requirements myself. From there, I organize the backlog and decide what makes sense to build first.'}
     </p>
 
     <p>
-      {es ? <>He diseñado arquitecturas de software para <strong>Ascensores SA</strong> y participado en integraciones con <strong>SAP y OfficeTrack</strong>.</> : <>
-      Some of my achievements are designing software architectures for <strong>Ascensores SA</strong>, 
-      participating in integrations of tools from multinational companies such as <strong>SAP and OfficeTrack</strong>.</>}
+      {es
+        ? 'Me gusta diseñar la arquitectura pensando en cómo va a crecer el producto. En CuadrAI, por ejemplo, trabajo tanto en la búsqueda y reserva de canchas como en las herramientas que usan sus administradores. También desarrollo el asistente que responde consultas de disponibilidad y uso agentes de IA para planificar cambios y revisar código.'
+        : 'I like designing software architecture with an eye on how the product will grow. In CuadrAI, for example, I work on court search and booking as well as the tools venue managers use. I also develop the assistant that answers availability questions and use AI agents to plan changes and review code.'}
     </p>
 
     <p>

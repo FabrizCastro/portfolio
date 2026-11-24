@@ -1,0 +1,229 @@
+---
+import type { WorkMedia } from '../work';
+
+interface Props {
+  items: WorkMedia[];
+  id: string;
+  title: string;
+  lang: 'es' | 'en';
+}
+
+const { items, id, title, lang } = Astro.props;
+const es = lang === 'es';
+const multiple = items.length > 1;
+---
+
+<div class="work-media" data-work-media role="group" aria-label={es ? `Galería de ${title}` : `${title} gallery`}>
+  <div id={id} class="swiper media-track" data-media-track tabindex={multiple ? 0 : undefined}>
+    <div class="swiper-wrapper">
+      {items.map(item => (
+        <figure class="swiper-slide media-frame">
+          <img src={item.src} alt={(item.alt ?? item.title)[lang]} loading="lazy" draggable="false"
+            width={item.width} height={item.height} class:list={{ 'dark:hidden': item.darkSrc }} />
+          {item.darkSrc && (
+            <img src={item.darkSrc} alt={(item.alt ?? item.title)[lang]} loading="lazy" draggable="false"
+              width={item.width} height={item.height} class="hidden dark:block" />
+          )}
+          {item.htmlSrc && <iframe class="diagram-preview" src={item.htmlSrc} title={item.title[lang]}
+            loading="lazy" tabindex="-1" aria-hidden="true" data-diagram-preview></iframe>}
+          <a class="media-button media-expand swiper-no-swiping" href={item.htmlSrc ?? item.src} data-media-expand data-html={item.htmlSrc}
+            aria-label={es ? `Ampliar: ${item.title[lang]}` : `Enlarge: ${item.title[lang]}`}>
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75"
+              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6m0-6-6 6m-4 10H4v-6m0 6 6-6" /></svg>
+          </a>
+          <figcaption>{item.title[lang]}</figcaption>
+        </figure>
+      ))}
+    </div>
+  </div>
+  {multiple && (
+    <div class="media-navigation" role="group" aria-label={es ? 'Navegación de imágenes' : 'Image navigation'} hidden>
+      <button type="button" class="media-button" data-media-prev aria-controls={id} aria-label={es ? 'Imagen anterior' : 'Previous image'}>
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg>
+      </button>
+      <span data-media-position aria-live="polite" aria-atomic="true">1 / {items.length}</span>
+      <button type="button" class="media-button" data-media-next aria-controls={id} aria-label={es ? 'Imagen siguiente' : 'Next image'}>
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6" /></svg>
+      </button>
+    </div>
+  )}
+  <dialog class="media-dialog" aria-label={es ? 'Vista ampliada' : 'Expanded view'}>
+    <form method="dialog"><button autofocus class="media-button" aria-label={es ? 'Cerrar' : 'Close'}>×</button></form>
+    <div class="media-detail" data-media-detail tabindex="0"></div>
+  </dialog>
+</div>
+
+<style>
+  .work-media {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    border-radius: .75rem;
+    background: rgb(148 163 184 / .12);
+  }
+
+  .media-track:not(.swiper-initialized) { overflow-x: auto; scroll-snap-type: x mandatory; }
+  .media-frame { position: relative; aspect-ratio: 4 / 3; margin: 0; scroll-snap-align: center; }
+  .media-frame:only-child { aspect-ratio: 16 / 10; }
+  .diagram-preview { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; pointer-events: none; opacity: 0; }
+  .diagram-preview[data-ready] { opacity: 1; }
+  .media-frame figcaption, .media-expand { z-index: 1; }
+  .media-dialog { margin: auto; width: min(96vw, 90rem); max-width: none; color: #f5f8ff; background: #101827; border: 1px solid #475569; border-radius: .75rem; }
+  .media-dialog::backdrop { background: rgb(4 8 16 / .8); }
+  .media-dialog form { display: flex; justify-content: flex-end; padding: .35rem; }
+  .media-dialog form button { font-size: 1.6rem; }
+  .media-detail { height: min(78dvh, 55rem); overflow: auto; }
+  .media-detail :global(iframe) { display: block; width: 100%; height: 100%; border: 0; }
+  .media-detail :global(img) { display: block; max-width: none; margin-inline: auto; }
+  .media-frame img { width: 100%; height: 100%; object-fit: contain; }
+
+  .media-frame figcaption, .media-button, .media-navigation {
+    color: #f5f8ff;
+    background: rgb(13 20 34 / .9);
+  }
+
+  .media-frame figcaption {
+    position: absolute;
+    inset-block-end: .5rem;
+    inset-inline-start: .5rem;
+    max-width: calc(100% - 1rem);
+    padding: .38rem .6rem;
+    border-radius: .45rem;
+    font-size: .8125rem;
+    font-weight: 600;
+    line-height: 1.3;
+    pointer-events: none;
+  }
+
+  .work-media:has(.media-navigation:not([hidden])) figcaption { max-width: calc(100% - 8.4rem); }
+
+  .media-button {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: .5rem;
+  }
+
+  .media-button:hover { background: #33445e; }
+  .media-button:focus-visible, .media-track:focus-visible { outline: 2px solid #9bcdff; outline-offset: -3px; }
+  .media-expand { position: absolute; inset-block-start: .5rem; inset-inline-end: .5rem; }
+
+  .media-navigation {
+    position: absolute;
+    z-index: 1;
+    inset-block-end: .5rem;
+    inset-inline-end: .5rem;
+    display: flex;
+    align-items: center;
+    border-radius: .5rem;
+    white-space: nowrap;
+    font-size: .75rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .media-navigation[hidden] { display: none; }
+  .media-navigation .media-button:not(:hover) { background: transparent; }
+</style>
+
+<script>
+  import Swiper from 'swiper';
+
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  document.querySelectorAll<HTMLElement>('[data-work-media]').forEach(gallery => {
+    const dialog = gallery.querySelector<HTMLDialogElement>('dialog');
+    const detail = dialog?.querySelector('[data-media-detail]');
+
+    function setupDiagram(frame: HTMLIFrameElement, preview: boolean) {
+      const doc = frame.contentDocument;
+      const canvas = doc?.querySelector<HTMLElement>('.canvas');
+      if (!doc || !canvas || doc.getElementById('embed-layout')) return;
+      const style = doc.createElement('style');
+      style.id = 'embed-layout';
+      style.textContent = 'html, body { overflow: auto; } .page { margin: 0; padding: 0; max-width: none; } .head, .legend, .foot { display: none; } .scroller { border: 0; border-radius: 0; }';
+      doc.head.append(style);
+      const resize = () => {
+        doc.documentElement.dataset.theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+        if (preview && frame.clientWidth) canvas.style.zoom = String(frame.clientWidth / canvas.offsetWidth);
+      };
+      resize();
+      if (preview) frame.dataset.ready = '';
+      const observer = new ResizeObserver(resize);
+      const themeObserver = new MutationObserver(resize);
+      observer.observe(frame);
+      themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+      if (!preview) {
+        dialog?.addEventListener('close', () => {
+          observer.disconnect();
+          themeObserver.disconnect();
+        }, { once: true });
+        doc.addEventListener('keydown', event => { if (event.key === 'Escape') dialog?.close(); });
+      }
+    }
+
+    gallery.querySelectorAll<HTMLIFrameElement>('[data-diagram-preview]').forEach(frame => {
+      frame.addEventListener('load', () => setupDiagram(frame, true));
+      if (frame.contentDocument?.querySelector('.canvas')) setupDiagram(frame, true);
+    });
+
+    if (dialog && detail) {
+      gallery.querySelectorAll<HTMLAnchorElement>('[data-media-expand]').forEach(link => {
+        link.addEventListener('click', event => {
+          if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+          event.preventDefault();
+          const image = [...(link.closest('figure')?.querySelectorAll('img') ?? [])]
+            .find(img => getComputedStyle(img).display !== 'none');
+          if (link.dataset.html) {
+            const frame = document.createElement('iframe');
+            frame.title = link.getAttribute('aria-label') ?? '';
+            frame.addEventListener('load', () => setupDiagram(frame, false), { once: true });
+            frame.src = link.dataset.html;
+            detail.replaceChildren(frame);
+          } else if (image) {
+            const expanded = new Image();
+            expanded.src = image.currentSrc || image.src;
+            expanded.alt = image.alt;
+            detail.replaceChildren(expanded);
+          }
+          dialog.showModal();
+          detail.scrollTo(0, 0);
+        });
+      });
+      dialog.addEventListener('close', () => detail.replaceChildren());
+    }
+
+    const track = gallery.querySelector<HTMLElement>('[data-media-track]');
+    const navigation = gallery.querySelector<HTMLElement>('.media-navigation');
+    const position = navigation?.querySelector<HTMLElement>('[data-media-position]');
+    if (!track || !navigation || !position) return;
+
+    const carousel = new Swiper(track, {
+      nested: true,
+      speed: reduced ? 0 : 260,
+      rewind: true,
+      grabCursor: true,
+      on: {
+        init: sync,
+        slideChange: sync,
+      },
+    });
+
+    function sync(swiper: Swiper) {
+      swiper.slides.forEach((slide, index) => { slide.inert = index !== swiper.activeIndex; });
+      if (position) position.textContent = `${swiper.activeIndex + 1} / ${swiper.slides.length}`;
+    }
+
+    navigation.querySelector('[data-media-prev]')?.addEventListener('click', () => carousel.slidePrev());
+    navigation.querySelector('[data-media-next]')?.addEventListener('click', () => carousel.slideNext());
+    track.addEventListener('keydown', event => {
+      if (event.target !== track || (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight')) return;
+      event.preventDefault();
+      if (event.key === 'ArrowLeft') carousel.slidePrev();
+      else carousel.slideNext();
+    });
+    navigation.hidden = false;
+  });
+</script>

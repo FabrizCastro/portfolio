@@ -1,28 +1,40 @@
 ---
 import { DevHero } from 'astro-component-kit/sections';
 import 'astro-component-kit/tokens.css';
+import { getSkillGroups } from '../skills';
 
 const es = Astro.props.lang === 'es';
+const groups = getSkillGroups(es).filter(group => group.previewCount > 0).map(group => ({
+  category: group.category,
+  skills: group.tools.slice(0, group.previewCount),
+}));
+
+const iconStyles = groups.flatMap(group => group.skills).map(tool => {
+  const selector = `.portfolio-dev-hero [data-name=${JSON.stringify(tool.name)}]`;
+  const icon = `${selector} { --skill-icon: url(${JSON.stringify(tool.icon)}); }`;
+  return tool.monochrome ? `${icon}\n.dark ${selector} { --skill-icon-filter: invert(1); }` : icon;
+}).join('\n');
 ---
 
 <DevHero
   className="portfolio-dev-hero"
   titles={[es
-    ? { base: 'Ingeniería', ext: '', role: 'de software de producto' }
-    : { base: 'Product', ext: '', role: 'Software Engineer' }]}
+    ? { base: 'Software', ext: '', role: 'e IA aplicada' }
+    : { base: 'Software', ext: '', role: 'and Applied AI' }]}
   name="Fabrizzio Castro"
   tagline={es
-    ? 'Soy egresado de Ingeniería de Software de la UPC. Desarrollo aplicaciones internas, diseño arquitecturas e integro sistemas empresariales como SAP y OfficeTrack. Tengo experiencia como Product Software Engineer, soy Founder de una aplicación de gestión de espacios deportivos emergente en Perú, y trabajo como consultor de software para digitalizar negocios.'
-    : 'I’m a Software Engineering graduate from UPC. I build internal applications, design software architecture, and integrate business systems such as SAP and OfficeTrack. I also automate workflows and data processing with Python.'}
+    ? 'Desarrollo CuadrAI, una plataforma para reservar y gestionar canchas deportivas. En mi día a día hablo con clientes, escribo requerimientos, priorizo el backlog y diseño la arquitectura del software. Me interesa crear aplicaciones con IA y usar agentes para desarrollar.'
+    : 'I’m building CuadrAI, a platform for booking and managing sports courts. Day to day, I talk to clients, write requirements, prioritize the backlog, and design the software architecture. I’m interested in building AI-powered applications and using agents in my development work.'}
   status={es ? 'Disponible para nuevos proyectos' : 'Available for new projects'}
   tapeLabel={es ? 'Stack y habilidades' : 'Stack & skills'}
   background="dots"
-  skills={[
-    { category: 'Frontend', skills: [{ name: 'React', description: es ? 'Desarrollo de interfaces web.' : 'Web interface development.' }, { name: 'Astro', description: es ? 'Sitios web de contenido.' : 'Content-focused websites.' }] },
-    { category: 'Backend', skills: [{ name: '.NET', description: es ? 'APIs e integraciones empresariales.' : 'APIs and business integrations.' }, { name: 'Python', description: es ? 'Procesamiento de datos y automatización.' : 'Data processing and automation.' }] },
-    { category: es ? 'Automatización' : 'Automation', skills: [{ name: 'n8n', description: es ? 'Flujos de trabajo e integración de servicios.' : 'Workflows and service integration.' }] },
-  ]}
+  skills={groups.map(group => ({
+    category: group.category,
+    skills: group.skills.map(({ name, description }) => ({ name, description: description ?? name })),
+  }))}
 />
+
+<style is:inline set:html={iconStyles}></style>
 
 <style is:global>
   .portfolio-dev-hero.dvhr {
@@ -35,10 +47,41 @@ const es = Astro.props.lang === 'es';
   .portfolio-dev-hero .dvhr__bg {
     position: absolute;
     inset: 0;
+    opacity: .5;
+  }
+
+  .portfolio-dev-hero .dvhr__wrap {
+    grid-template-columns: minmax(0, 1.17fr) minmax(0, .95fr) minmax(0, .88fr);
+    grid-template-areas: 'intro portrait stack';
+    max-width: 1280px;
+    gap: clamp(1rem, 2vw, 2rem);
+  }
+
+  .portfolio-dev-hero .dvhr__main {
+    grid-area: intro;
+  }
+
+  .portfolio-dev-hero .dvhr__tape {
+    grid-area: stack;
+  }
+
+  /* DevHero has no portrait slot, so the decorative portrait occupies a grid area. */
+  .portfolio-dev-hero .dvhr__wrap::before {
+    content: '';
+    grid-area: portrait;
+    justify-self: center;
+    width: 88%;
+    max-width: 345px;
+    aspect-ratio: 4 / 5;
+    background: url('../assets/foto-perfil-hero.webp') center / contain no-repeat;
+    mask-image:
+      linear-gradient(to bottom, black 68%, rgb(0 0 0 / .88) 77%, rgb(0 0 0 / .38) 89%, transparent 99%),
+      linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+    mask-composite: intersect;
   }
 
   .portfolio-dev-hero .dvhr__line {
-    font-size: clamp(2.1rem, 5.6vw, 4.5rem);
+    font-size: clamp(2.1rem, 4.6vw, 4.5rem);
   }
 
   .portfolio-dev-hero .dvhr__tagline {
@@ -51,6 +94,31 @@ const es = Astro.props.lang === 'es';
     color: var(--c-text-2);
   }
 
+  @media (max-width: 1050px) {
+    .portfolio-dev-hero .dvhr__wrap {
+      grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+      grid-template-areas: 'intro portrait' 'stack stack';
+      max-width: 780px;
+      row-gap: 2rem;
+    }
+
+    .portfolio-dev-hero .dvhr__tape {
+      width: 100%;
+      max-width: none;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .portfolio-dev-hero .dvhr__wrap {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas: 'intro' 'portrait' 'stack';
+    }
+
+    .portfolio-dev-hero .dvhr__wrap::before {
+      max-width: 215px;
+    }
+  }
+
   /* DevHero renders a decorative marker in each skill button. */
   .portfolio-dev-hero .dvhr__pill-mark {
     width: 1rem;
@@ -59,27 +127,11 @@ const es = Astro.props.lang === 'es';
     border: 0;
     border-radius: 0;
     opacity: 1;
-    background-color: currentColor;
-    mask: var(--skill-icon) center / contain no-repeat;
+    background: var(--skill-icon) center / contain no-repeat;
+    filter: var(--skill-icon-filter, none);
   }
 
-  .portfolio-dev-hero [data-name="React"] {
-    --skill-icon: url('../assets/skills/brand-react.svg');
-  }
-
-  .portfolio-dev-hero [data-name="Astro"] {
-    --skill-icon: url('../assets/skills/brand-astro.svg');
-  }
-
-  .portfolio-dev-hero [data-name=".NET"] {
-    --skill-icon: url('../assets/skills/dotnet.svg');
-  }
-
-  .portfolio-dev-hero [data-name="Python"] {
-    --skill-icon: url('../assets/skills/brand-python.svg');
-  }
-
-  .portfolio-dev-hero [data-name="n8n"] {
-    --skill-icon: url('../assets/skills/n8n.svg');
+  .portfolio-dev-hero .dvhr__track {
+    animation-duration: 54s;
   }
 </style>

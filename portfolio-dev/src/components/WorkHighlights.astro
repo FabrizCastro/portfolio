@@ -1,0 +1,16 @@
+---
+import type { WorkPoint } from '../work';
+
+interface Props {
+  points: WorkPoint[];
+  lang: 'es' | 'en';
+}
+
+const { points, lang } = Astro.props;
+---
+
+<ul class="mt-3 list-disc space-y-2 ps-5 marker:text-slate-500 dark:marker:text-slate-400">
+  {points.map(point => (
+    <li><strong class="font-bold">{point.label[lang]}.</strong>{' '}{point.text[lang]}</li>
+  ))}
+</ul>

@@ -1,5 +1,7 @@
 ---
 import { work } from '../work';
+import WorkHighlights from './WorkHighlights.astro';
+import WorkTechnologies from './WorkTechnologies.astro';
 const lang = Astro.props.lang === 'es' ? 'es' : 'en';
 ---
 
@@ -7,21 +9,22 @@ const lang = Astro.props.lang === 'es' ? 'es' : 'en';
   {work.map((job) => (
     <li class="work-entry">
       <div class="work-role">
-        <h3 class="text-xl font-semibold">{job.company}</h3>
+        <h3 class="company-name text-xl font-semibold">{job.company}</h3>
         <p class="mt-1 text-sm">{job.role[lang]}</p>
         {job.date && <p class="mt-2 text-sm text-slate-600 dark:text-slate-400">{job.date[lang]}</p>}
       </div>
-      <div class="work-cases">
-        <p class="text-slate-700 dark:text-slate-300">{job.description[lang]}</p>
+      <div class="work-cases text-slate-700 dark:text-slate-300">
+        <div>
+          <p class="role-summary">{job.description[lang]}</p>
+          {job.highlights && <WorkHighlights points={job.highlights} {lang} />}
+          {job.technologies && <WorkTechnologies technologies={job.technologies} {lang} />}
+        </div>
         {job.cases.map((project) => (
-          <article class="work-case">
-            <div>
-              <h4 class="font-semibold">{project.title[lang]}</h4>
-              <p class="mt-1 text-slate-700 dark:text-slate-300">{project.description[lang]}</p>
-            </div>
-            <a class="case-link" href={`#${project.id}`} aria-label={`${lang === 'es' ? 'Ver caso' : 'View case'}: ${project.title[lang]}`}>
-              {lang === 'es' ? 'Ver caso' : 'View case'} <span aria-hidden="true">↗</span>
-            </a>
+          <article class="work-case" data-cover={project.cover}>
+            <h4>{project.title[lang]}</h4>
+            <p class="mt-2">{(project.timelineDescription ?? project.description)[lang]}</p>
+            {project.highlights && <WorkHighlights points={project.highlights} {lang} />}
+            <WorkTechnologies technologies={project.technologies} {lang} />
           </article>
         ))}
       </div>
@@ -33,11 +36,10 @@ const lang = Astro.props.lang === 'es' ? 'es' : 'en';
   .work-entry { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1rem; margin-left: .35rem; border-left: 1px solid rgb(148 163 184 / .32); padding: 0 0 2.3rem 1.2rem; position: relative; }
   .work-entry:last-child { padding-bottom: 0; }
   .work-entry::before { content: ''; position: absolute; top: .55rem; left: -.3rem; width: .55rem; height: .55rem; border-radius: 50%; background: #d9a71e; }
-  .work-cases { display: grid; gap: .9rem; }
-  .work-case { display: flex; flex-wrap: wrap; align-items: start; justify-content: space-between; gap: .6rem 1rem; }
-  .work-case > div { flex: 1 1 18rem; }
-  .case-link { border: 1px solid rgb(148 163 184 / .42); border-radius: .45rem; padding: .4rem .65rem; font-size: .875rem; }
-  .case-link:hover { border-color: #d9a71e; }
+  .work-cases { display: grid; gap: 1.5rem; min-width: 0; line-height: 1.6; }
+  .role-summary { font-weight: 600; }
+  .work-case h4 { display: inline-block; margin: 0; padding: .25rem .65rem; border-radius: .2rem; background: var(--cover); color: var(--cover-ink); font-size: 1rem; font-weight: 700; text-wrap: balance; }
+  .company-name { font-family: var(--font-mono, ui-monospace, Consolas, monospace); }
   @media (min-width: 700px) {
     .work-entry { grid-template-columns: 13rem minmax(0, 1fr); gap: 2rem; margin-left: 0; padding-left: 0; border-left: 0; }
     .work-entry::before { left: 12.75rem; }

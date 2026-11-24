@@ -2,3 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+:where([data-cover='orange']) { --cover: #b34015; --cover-ink: #fff; }
+:where([data-cover='yellow']) { --cover: #f4d15d; --cover-ink: #29200a; }
+:where([data-cover='blue']) { --cover: #2053a5; --cover-ink: #fff; }
+:where([data-cover='sky']) { --cover: #a9e4f5; --cover-ink: #142e43; }
+:where([data-cover='lavender']) { --cover: #ded0fa; --cover-ink: #32234d; }
+

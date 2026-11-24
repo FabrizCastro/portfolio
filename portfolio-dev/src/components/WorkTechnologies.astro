@@ -1,0 +1,56 @@
+---
+import angular from '../assets/skills/tech-angular.svg?url';
+import api from '../assets/skills/api.svg?url';
+import aws from '../assets/skills/tech-aws.svg?url';
+import csharp from '../assets/skills/tech-csharp.svg?url';
+import docker from '../assets/skills/tech-docker.svg?url';
+import dotnet from '../assets/skills/tech-dotnet.svg?url';
+import fastapi from '../assets/skills/tech-fastapi.svg?url';
+import kafka from '../assets/skills/tech-kafka.svg?url';
+import mongodb from '../assets/skills/tech-mongodb.svg?url';
+import postgres from '../assets/skills/tech-postgresql.svg?url';
+import python from '../assets/skills/tech-python.svg?url';
+import react from '../assets/skills/tech-react.svg?url';
+import spring from '../assets/skills/tech-spring.svg?url';
+import sqlserver from '../assets/skills/tech-sqlserver.svg?url';
+
+interface Props {
+  technologies: string[];
+  lang: 'es' | 'en';
+}
+
+const { technologies, lang } = Astro.props;
+const icons: Record<string, string> = {
+  Angular: angular,
+  'Amazon EC2': aws,
+  'ASP.NET Core': dotnet,
+  AWS: aws,
+  'C#': csharp,
+  Docker: docker,
+  FastAPI: fastapi,
+  'Apache Kafka': kafka,
+  MongoDB: mongodb,
+  PostgreSQL: postgres,
+  Python: python,
+  React: react,
+  'REST API': api,
+  'Spring Boot WebFlux': spring,
+  'SQL Server': sqlserver,
+};
+---
+
+<ul class="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-sm font-medium" aria-label={lang === 'es' ? 'Tecnologías' : 'Technologies'}>
+  {technologies.map(technology => (
+    <li class="inline-flex items-center gap-1.5">
+      {icons[technology] && <img
+        src={icons[technology]}
+        alt=""
+        width="16"
+        height="16"
+        loading="lazy"
+        class:list={['size-4 shrink-0 object-contain', { 'dark:invert': technology === 'Apache Kafka' }]}
+      />}
+      {technology}
+    </li>
+  ))}
+</ul>
