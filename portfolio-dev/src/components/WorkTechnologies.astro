@@ -11,18 +11,21 @@ import mongodb from '../assets/skills/tech-mongodb.svg?url';
 import postgres from '../assets/skills/tech-postgresql.svg?url';
 import python from '../assets/skills/tech-python.svg?url';
 import react from '../assets/skills/tech-react.svg?url';
+import server from '../assets/skills/server.svg?url';
 import spring from '../assets/skills/tech-spring.svg?url';
 import sqlserver from '../assets/skills/tech-sqlserver.svg?url';
+import vite from '../assets/skills/tech-vite.svg?url';
 
 interface Props {
   technologies: string[];
   lang: 'es' | 'en';
+  iconsOnly?: boolean;
 }
 
-const { technologies, lang } = Astro.props;
+const { technologies, lang, iconsOnly = false } = Astro.props;
 const icons: Record<string, string> = {
   Angular: angular,
-  'Amazon EC2': aws,
+  'Amazon EC2': server,
   'ASP.NET Core': dotnet,
   AWS: aws,
   'C#': csharp,
@@ -36,21 +39,25 @@ const icons: Record<string, string> = {
   'REST API': api,
   'Spring Boot WebFlux': spring,
   'SQL Server': sqlserver,
+  Vite: vite,
 };
+const monochrome = new Set(['Amazon EC2', 'Apache Kafka', 'REST API']);
+const iconSize = iconsOnly ? 24 : 16;
 ---
 
-<ul class="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-sm font-medium" aria-label={lang === 'es' ? 'Tecnologías' : 'Technologies'}>
+<ul class="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm font-medium" aria-label={lang === 'es' ? 'Tecnologías' : 'Technologies'}>
   {technologies.map(technology => (
-    <li class="inline-flex items-center gap-1.5">
+    <li class="inline-flex items-center gap-1.5" title={iconsOnly ? technology : undefined}>
       {icons[technology] && <img
         src={icons[technology]}
-        alt=""
-        width="16"
-        height="16"
-        loading="lazy"
-        class:list={['size-4 shrink-0 object-contain', { 'dark:invert': technology === 'Apache Kafka' }]}
+        alt={iconsOnly ? technology : ''}
+        width={iconSize}
+        height={iconSize}
+        loading={iconsOnly ? 'eager' : 'lazy'}
+        class:list={['shrink-0 object-contain', iconsOnly ? 'size-6' : 'size-4', { 'dark:invert': monochrome.has(technology) }]}
       />}
-      {technology}
+      {!iconsOnly && technology}
+      {iconsOnly && !icons[technology] && <span class="sr-only">{technology}</span>}
     </li>
   ))}
 </ul>

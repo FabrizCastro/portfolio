@@ -50,7 +50,7 @@ const Heading = featured ? "h4" : "h3";
       )}
       {date && <time datetime={date}>{dateLabel}</time>}
     </p>
-    <Heading id={headingId} class="project-title">{title}</Heading>
+    <Heading id={headingId} class="portfolio-heading project-title">{title}</Heading>
     <p class="project-description">{summary}</p>
     {technologies.length > 0 && (
       <ul class="project-technologies" aria-label={es ? "Tecnologías" : "Technologies"}>
@@ -115,8 +115,8 @@ const Heading = featured ? "h4" : "h3";
   :global(.dark) .project-meta span { color: #f1bd47; }
   .project-company { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.12rem 0.45rem; border: 1px solid rgb(148 163 184 / 0.45); border-radius: 0.45rem; }
   .project-company img { border-radius: 0.2rem; background: #fff; }
-  .project-title { margin-top: 0.5rem; font-size: clamp(1.4rem, 2.5vw, 2rem); font-weight: 700; line-height: 1.1; overflow-wrap: anywhere; }
-  .featured .project-title { font-size: clamp(1.65rem, 4vw, 3rem); letter-spacing: -0.045em; }
+  .project-title { margin-top: 0.5rem; font-size: clamp(1.3rem, 2.15vw, 1.8rem); overflow-wrap: anywhere; }
+  .featured .project-title { font-size: clamp(1.5rem, 3.2vw, 2.5rem); }
   .project-description { margin-top: 0.8rem; color: var(--c-text-2); line-height: 1.65; }
   .project-technologies { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.9rem; font-size: 0.76rem; }
   .project-technologies li { border: 1px solid rgb(148 163 184 / 0.3); border-radius: 0.35rem; padding: 0.2rem 0.5rem; }

@@ -9,7 +9,7 @@ const lang = Astro.props.lang === 'es' ? 'es' : 'en';
   {work.map((job) => (
     <li class="work-entry">
       <div class="work-role">
-        <h3 class="company-name text-xl font-semibold">{job.company}</h3>
+        <h3 class="portfolio-heading text-xl">{job.company}</h3>
         <p class="mt-1 text-sm">{job.role[lang]}</p>
         {job.date && <p class="mt-2 text-sm text-slate-600 dark:text-slate-400">{job.date[lang]}</p>}
       </div>
@@ -21,7 +21,7 @@ const lang = Astro.props.lang === 'es' ? 'es' : 'en';
         </div>
         {job.cases.map((project) => (
           <article class="work-case" data-cover={project.cover}>
-            <h4>{project.title[lang]}</h4>
+            <h4 class="portfolio-heading">{project.title[lang]}</h4>
             <p class="mt-2">{(project.timelineDescription ?? project.description)[lang]}</p>
             {project.highlights && <WorkHighlights points={project.highlights} {lang} />}
             <WorkTechnologies technologies={project.technologies} {lang} />
@@ -38,8 +38,7 @@ const lang = Astro.props.lang === 'es' ? 'es' : 'en';
   .work-entry::before { content: ''; position: absolute; top: .55rem; left: -.3rem; width: .55rem; height: .55rem; border-radius: 50%; background: #d9a71e; }
   .work-cases { display: grid; gap: 1.5rem; min-width: 0; line-height: 1.6; }
   .role-summary { font-weight: 600; }
-  .work-case h4 { display: inline-block; margin: 0; padding: .25rem .65rem; border-radius: .2rem; background: var(--cover); color: var(--cover-ink); font-size: 1rem; font-weight: 700; text-wrap: balance; }
-  .company-name { font-family: var(--font-mono, ui-monospace, Consolas, monospace); }
+  .work-case h4 { color: var(--c-text-1); font-size: 1.15rem; }
   @media (min-width: 700px) {
     .work-entry { grid-template-columns: 13rem minmax(0, 1fr); gap: 2rem; margin-left: 0; padding-left: 0; border-left: 0; }
     .work-entry::before { left: 12.75rem; }

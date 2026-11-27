@@ -6,6 +6,7 @@ const es = lang === "es";
 const home = es ? "/es/" : "/";
 const navItems = [
   { title: es ? "Experiencia" : "Experience", id: "experience" },
+  { title: es ? "Casos" : "Cases", id: "work-cases" },
   { title: es ? "Proyectos" : "Projects", id: "projects" },
   { title: "Stack", id: "stack" },
   { title: es ? "Sobre mí" : "About me", id: "about-me" },
@@ -18,7 +19,7 @@ const navItems = [
 >
   <nav
     aria-label={es ? "Navegación principal" : "Main navigation"}
-    class="flex flex-wrap px-1 text-xs sm:px-3 sm:text-sm font-medium rounded-full text-gray-600 dark:text-gray-200 justify-center items-center"
+    class="portfolio-nav flex flex-wrap px-1 text-xs sm:px-3 sm:text-sm font-medium rounded-full text-gray-600 dark:text-gray-200 justify-center items-center"
   >
     {
       navItems.map((link) => (
@@ -45,50 +46,12 @@ const navItems = [
   </nav>
 </header>
 
-<script>
-  {
-    const sections = document.querySelectorAll("section")
-    const navItems = document.querySelectorAll("header nav a")
-
-    const callback = (entries: any[]) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          navItems.forEach((item) => {
-            if (item.getAttribute("data-section") == entry.target.id) {
-              item.classList.add("text-blue-500")
-            } else {
-              item.classList.remove("text-blue-500")
-            }
-          })
-        }
-      })
-    }
-
-    const observer = new IntersectionObserver(callback, {
-      root: null,
-      rootMargin: "0px",
-      threshold: 0.3,
-    })
-
-    sections.forEach((section) => {
-      observer.observe(section)
-    })
-
-    // Cleanup function
-    document.onvisibilitychange = () => {
-      if (document.visibilityState === "hidden") {
-        observer.disconnect()
-      } else {
-        sections.forEach((section) => {
-          observer.observe(section)
-        })
-      }
-    }
-  }
-</script>
-
 <style>
   nav {
     @apply max-w-full bg-white/90 shadow-sm backdrop-blur dark:bg-gray-800/90;
+  }
+
+  a[aria-current="location"] {
+    @apply text-blue-700 dark:text-blue-300;
   }
 </style>

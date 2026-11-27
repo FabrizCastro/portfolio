@@ -1,5 +1,10 @@
 <h2
-	class={`flex items-center mb-6 text-3xl font-semibold gap-x-3 text-black/80 dark:text-white ${Astro.props.className}`}
+	class:list={["portfolio-heading section-title flex items-center mb-6 gap-x-3 text-black/90 dark:text-white", Astro.props.className]}
 >
     <slot />
 </h2>
+
+<style>
+  .section-title { font-size: clamp(2rem, 3.1vw, 3.25rem); }
+  .section-title :global(svg) { flex-shrink: 0; }
+</style>

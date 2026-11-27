@@ -4,6 +4,13 @@ import 'astro-component-kit/tokens.css';
 import { getSkillGroups } from '../skills';
 
 const es = Astro.props.lang === 'es';
+const headlines = [
+  es ? 'Software\ne IA aplicada' : 'Software\nand Applied AI',
+  'AI\nEngineer',
+  'Product Software\nEngineer',
+  'Full-Stack\nDeveloper',
+  'Software\nArchitecture',
+];
 const groups = getSkillGroups(es).filter(group => group.previewCount > 0).map(group => ({
   category: group.category,
   skills: group.tools.slice(0, group.previewCount),
@@ -18,9 +25,8 @@ const iconStyles = groups.flatMap(group => group.skills).map(tool => {
 
 <DevHero
   className="portfolio-dev-hero"
-  titles={[es
-    ? { base: 'Software', ext: '', role: 'e IA aplicada' }
-    : { base: 'Software', ext: '', role: 'and Applied AI' }]}
+  titles={headlines.map(base => ({ base, ext: '', role: '' }))}
+  interval={4700}
   name="Fabrizzio Castro"
   tagline={es
     ? 'Desarrollo CuadrAI, una plataforma para reservar y gestionar canchas deportivas. En mi día a día hablo con clientes, escribo requerimientos, priorizo el backlog y diseño la arquitectura del software. Me interesa crear aplicaciones con IA y usar agentes para desarrollar.'
@@ -59,6 +65,7 @@ const iconStyles = groups.flatMap(group => group.skills).map(tool => {
 
   .portfolio-dev-hero .dvhr__main {
     grid-area: intro;
+    container-type: inline-size;
   }
 
   .portfolio-dev-hero .dvhr__tape {
@@ -70,8 +77,9 @@ const iconStyles = groups.flatMap(group => group.skills).map(tool => {
     content: '';
     grid-area: portrait;
     justify-self: center;
-    width: 88%;
-    max-width: 345px;
+    width: 76%;
+    max-width: 270px;
+    opacity: .62;
     aspect-ratio: 4 / 5;
     background: url('../assets/foto-perfil-hero.webp') center / contain no-repeat;
     mask-image:
@@ -81,7 +89,29 @@ const iconStyles = groups.flatMap(group => group.skills).map(tool => {
   }
 
   .portfolio-dev-hero .dvhr__line {
-    font-size: clamp(2.1rem, 4.6vw, 4.5rem);
+    font-size: clamp(1.85rem, 12cqi, 3.85rem);
+    line-height: 1;
+  }
+
+  .portfolio-dev-hero .dvhr__title { width: 100%; }
+  .portfolio-dev-hero .dvhr__line--1 { min-block-size: 2em; }
+  .portfolio-dev-hero [data-base] { white-space: pre-line; }
+  .portfolio-dev-hero .dvhr__line--2 { display: none; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .portfolio-dev-hero [data-base]::after {
+      content: '';
+      display: inline-block;
+      width: .055em;
+      height: .76em;
+      margin-inline-start: .08em;
+      background: currentColor;
+      animation: hero-type-caret 1.05s step-end infinite;
+    }
+
+    @keyframes hero-type-caret {
+      50% { opacity: 0; }
+    }
   }
 
   .portfolio-dev-hero .dvhr__tagline {
@@ -115,7 +145,7 @@ const iconStyles = groups.flatMap(group => group.skills).map(tool => {
     }
 
     .portfolio-dev-hero .dvhr__wrap::before {
-      max-width: 215px;
+      max-width: 165px;
     }
   }
 

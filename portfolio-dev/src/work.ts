@@ -16,14 +16,15 @@ export interface WorkCase {
   title: Localized;
   type: Localized;
   description: Localized;
+  emphasis?: string[];
   timelineDescription?: Localized;
   technologies: string[];
-  commands: string[];
+  command: { label: Localized; text: string; output: string };
   highlights?: WorkPoint[];
   cover: 'orange' | 'yellow' | 'blue' | 'sky' | 'lavender';
   media?: WorkMedia[];
   architecture?: {
-    description?: Localized;
+    title?: Localized;
     diagram: string;
     language?: keyof Localized;
     alt: Localized;
@@ -53,16 +54,70 @@ export const work: WorkEntry[] = [
     },
     cases: [
       {
+        id: 'ascensores-hub',
+        title: { es: 'Ascensores Hub', en: 'Ascensores Hub' },
+        type: { es: 'Portal de mantenimiento', en: 'Maintenance portal' },
+        cover: 'sky',
+        description: {
+          es: 'Diseñé y desarrollé un portal para que clientes como BCP consulten el estado de sus equipos, las emergencias atendidas y sus certificados de mantenimiento.',
+          en: 'I designed and built a portal for customers like BCP to check equipment status, completed emergency work, and maintenance certificates.',
+        },
+        emphasis: ['BCP'],
+        timelineDescription: {
+          es: 'Desarrollé un portal para que clientes como BCP consultaran el estado de sus equipos, las emergencias atendidas y sus certificados de mantenimiento.',
+          en: 'I built a portal for customers such as BCP to see equipment status, emergency work, and maintenance certificates.',
+        },
+        architecture: {
+          diagram: '/ascensores/architecture/ascensores-hub-aws',
+          alt: {
+            es: 'Arquitectura AWS de Ascensores Hub y sus conexiones con SISMAN',
+            en: 'Ascensores Hub AWS architecture and its connections to SISMAN',
+          },
+          width: 2560,
+          height: 1360,
+        },
+        media: [
+          {
+            src: '/ascensores/ascensores-hub-resumen.png',
+            title: { es: 'Panel de resumen', en: 'Overview dashboard' },
+            alt: { es: 'Panel de resumen del portal Ascensores Hub', en: 'Ascensores Hub overview dashboard' },
+            width: 1905,
+            height: 907,
+          },
+          {
+            src: '/ascensores/ascensores-hub-emergencia.png',
+            title: { es: 'Emergencias', en: 'Emergency work' },
+            alt: { es: 'Vista de emergencias en Ascensores Hub', en: 'Emergency work view in Ascensores Hub' },
+            width: 1902,
+            height: 901,
+          },
+          {
+            src: '/ascensores/ascensores-hub-login.png',
+            title: { es: 'Inicio de sesión', en: 'Sign-in' },
+            alt: { es: 'Pantalla de inicio de sesión de Ascensores Hub', en: 'Ascensores Hub sign-in screen' },
+            width: 1918,
+            height: 910,
+          },
+        ],
+        technologies: ['React', 'Python', 'FastAPI', 'PostgreSQL', 'Docker', 'AWS'],
+        command: {
+          label: { es: 'Revisar los registros de la API de Hub', en: 'Review Hub API logs' },
+          text: 'docker logs --since 24h "$HUB_API_CONTAINER"',
+          output: 'INFO: Uvicorn running on http://0.0.0.0:8000',
+        },
+      },
+      {
         id: 'sisman-aws',
         title: { es: 'Arquitectura SISMAN en AWS', en: 'SISMAN architecture on AWS' },
         type: { es: 'Arquitectura', en: 'Architecture' },
         cover: 'yellow',
         description: {
-          es: 'Participé en el diseño y la conexión de cuatro contenedores en un único servidor Amazon EC2: API, FTP, base de datos y aplicación web. La API sincroniza datos con SAP y OfficeTrack, el FTP recibe certificados y SISMAN Web consulta la base de datos.',
-          en: 'I helped design and connect four containers on one Amazon EC2 host: the API, FTP, database, and web application. The API syncs data with SAP and OfficeTrack, FTP receives certificates, and SISMAN Web queries the database.',
+          es: 'Participé en el diseño y la migración de SISMAN a AWS. Coordiné con DELTA, SAP y OfficeTrack para mantener las integraciones operativas.',
+          en: 'I helped design and migrate SISMAN to AWS and coordinated with DELTA, SAP, and OfficeTrack to keep integrations running.',
         },
+        emphasis: ['DELTA', 'SAP', 'OfficeTrack'],
         architecture: {
-          diagram: 'sisman-aws',
+          diagram: '/ascensores/architecture/sisman-aws',
           language: 'en',
           alt: {
             es: 'Diagrama en inglés de los cuatro contenedores de SISMAN en un host EC2 y sus flujos con SAP y OfficeTrack',
@@ -79,7 +134,11 @@ export const work: WorkEntry[] = [
           },
         }],
         technologies: ['AWS', 'Amazon EC2'],
-        commands: ['aws ec2 describe-instance-status --include-all-instances --output table'],
+        command: {
+          label: { es: 'Comprobar el estado del servidor de SISMAN', en: 'Check the SISMAN server status' },
+          text: 'aws ec2 describe-instance-status --instance-ids "$SISMAN_INSTANCE_ID" --output table',
+          output: 'InstanceState: running · SystemStatus: ok',
+        },
       },
       {
         id: 'ascensores-tools',
@@ -87,15 +146,19 @@ export const work: WorkEntry[] = [
         type: { es: 'Seguimiento comercial', en: 'Sales tracking' },
         cover: 'blue',
         description: {
-          es: 'Desarrollé con C# y React una herramienta para que los ejecutivos de ventas de Ascensores gestionaran prospectos y clientes y dieran seguimiento a sus oportunidades. Armé el backlog a partir de reuniones periódicas con el equipo comercial y validé con ellos el diseño, las funcionalidades y las propuestas según su forma de trabajar.',
-          en: 'I built a C# and React tool for the Ascensores sales team to manage prospects, customers, and sales opportunities. I owned the backlog and met with sales executives regularly to validate designs, features, and proposals against how they worked.',
+          es: 'Desarrollé una herramienta para que el equipo comercial gestionara prospectos, clientes y oportunidades.',
+          en: 'I built a tool for the sales team to manage prospects, customers, and opportunities.',
         },
         timelineDescription: {
           es: 'Construí una herramienta para seguir prospectos y clientes. Armé el backlog y validé el diseño y las funcionalidades con los ejecutivos de ventas.',
           en: 'I built a tool to track prospects and customers. I owned the backlog and validated designs and features with the sales team.',
         },
         technologies: ['C#', 'ASP.NET Core', 'React', 'Vite', 'REST API'],
-        commands: ['dotnet build', 'npm run build'],
+        command: {
+          label: { es: 'Iniciar la API comercial en local', en: 'Run the sales API locally' },
+          text: 'dotnet run --urls http://localhost:5080',
+          output: 'Now listening on: http://localhost:5080',
+        },
         media: [
           {
             src: '/ascensores/swagger.jpeg',
@@ -126,35 +189,6 @@ export const work: WorkEntry[] = [
           },
         ],
       },
-      {
-        id: 'ascensores-hub',
-        title: { es: 'Ascensores Hub', en: 'Ascensores Hub' },
-        type: { es: 'Portal de mantenimiento', en: 'Maintenance portal' },
-        cover: 'sky',
-        description: {
-          es: 'Diseñé y desarrollé un portal para que clientes empresariales como BCP consultaran cuántos equipos tenían, cuáles estaban operativos y qué mantenimientos o emergencias se habían atendido. El dashboard muestra los materiales utilizados en cada emergencia y gráficos por tipo de reclamo. El portal también reúne los certificados de mantenimiento terminados.',
-          en: 'I designed and built a portal for enterprise customers such as BCP to see how many units they had, which were operational, and what maintenance or emergency work had been completed. The dashboard shows materials used in each emergency and charts by complaint type. The portal also provides completed maintenance certificates.',
-        },
-        timelineDescription: {
-          es: 'Desarrollé un portal para que clientes como BCP consultaran el estado de sus equipos, las emergencias atendidas y sus certificados de mantenimiento.',
-          en: 'I built a portal for customers such as BCP to see equipment status, emergency work, and maintenance certificates.',
-        },
-        architecture: {
-          description: {
-            es: 'Organicé el portal como un monolito horizontal con React, FastAPI y PostgreSQL. CloudFront sirve el frontend desde Amazon S3 y el backend corre en Amazon EC2 con Docker. El Hub se conecta al VPC de SISMAN para sincronizar datos de su API una vez al día y recuperar certificados vía FTP. El diseño incluye Cognito para el acceso y CloudWatch para la observabilidad.',
-            en: 'I structured the portal as a horizontal monolith with React, FastAPI, and PostgreSQL. CloudFront serves the frontend from Amazon S3, and the backend runs in Docker on Amazon EC2. Hub connects to the SISMAN VPC to sync API data once a day and retrieve certificates over FTP. The design includes Cognito for access and CloudWatch for observability.',
-          },
-          diagram: 'ascensores-hub-aws',
-          alt: {
-            es: 'Arquitectura AWS de Ascensores Hub y sus conexiones con SISMAN',
-            en: 'Ascensores Hub AWS architecture and its connections to SISMAN',
-          },
-          width: 2560,
-          height: 1360,
-        },
-        technologies: ['React', 'Python', 'FastAPI', 'PostgreSQL', 'Docker', 'AWS'],
-        commands: ['docker image ls', 'docker ps', 'docker stats --no-stream'],
-      },
     ],
   },
   {
@@ -171,28 +205,30 @@ export const work: WorkEntry[] = [
       type: { es: 'Backoffice de resort', en: 'Resort back office' },
       cover: 'orange',
       description: {
-        es: 'Resolví tickets durante la migración del backoffice a microservicios. También desarrollé el módulo de preguntas y respuestas de clientes y di mantenimiento a MongoDB.',
-        en: 'I resolved tickets during the back office migration to microservices. I also built the customer Q&A module and maintained MongoDB.',
+        es: 'Desarrollé el módulo de consultas de clientes, mantuve el cálculo de comisiones y reutilicé Kafka para los correos de eventos.',
+        en: 'I built the customer Q&A module, maintained commission calculations, and reused Kafka for event emails.',
       },
+      emphasis: ['Kafka'],
       timelineDescription: {
         es: 'Desarrollé el módulo de preguntas y respuestas de clientes y di mantenimiento a MongoDB.',
         en: 'I built the customer Q&A module and maintained MongoDB.',
       },
-      highlights: [
-        {
-          label: { es: 'Comisiones de socios', en: 'Member commissions' },
-          text: { es: 'Mantuve el árbol binario que calculaba comisiones a partir de los puntos por consumos y reservas en el resort.', en: 'I maintained the binary tree that calculated commissions from points earned through spending and bookings at the resort.' },
+      architecture: {
+        title: { es: 'Propuesta de arquitectura en AWS', en: 'Proposed AWS architecture' },
+        diagram: '/inclub/architecture/inclub-aws',
+        alt: {
+          es: 'Propuesta de microservicios para Inclub en AWS: el backoffice Angular accede a los servicios en ECS, con MongoDB para persistencia y Amazon MSK para las notificaciones de eventos.',
+          en: 'Proposed AWS microservices architecture for Inclub: the Angular back office accesses services on ECS, with MongoDB for persistence and Amazon MSK for event notifications.',
         },
-        {
-          label: { es: 'Eventos y notificaciones', en: 'Events and notifications' },
-          text: {
-            es: 'Me encargué del módulo donde los administradores registraban eventos, aprobaban socios y los ubicaban por rango. Reutilicé el microservicio de eventos y las colas de Kafka para reenviar correos de promociones antes, durante y después de cada evento.',
-            en: 'I worked on the module staff used to create events, approve members, and assign their positions by rank. I reused the event microservice and Kafka queues to resend promotional emails before, during, and after each event.',
-          },
-        },
-      ],
+        width: 2520,
+        height: 1180,
+      },
       technologies: ['Spring Boot WebFlux', 'Angular', 'MongoDB', 'Apache Kafka'],
-      commands: ['ng build', 'mongosh --eval "db.runCommand({ ping: 1 })"'],
+      command: {
+        label: { es: 'Revisar el atraso de notificaciones en Kafka', en: 'Check Kafka notification consumer lag' },
+        text: 'kafka-consumer-groups.sh --bootstrap-server "$KAFKA_BOOTSTRAP_SERVERS" --describe --group "$NOTIFICATIONS_GROUP"',
+        output: 'event-notifications | PARTITION 0 | LAG 0',
+      },
     }],
   },
   {

@@ -1,7 +1,6 @@
 ---
 import type { WorkCase, WorkMedia } from '../work';
 import WorkCommands from './WorkCommands.astro';
-import WorkHighlights from './WorkHighlights.astro';
 import WorkMediaGallery from './WorkMediaGallery.astro';
 import WorkTechnologies from './WorkTechnologies.astro';
 
@@ -13,14 +12,19 @@ interface Props {
 
 const { project, company, lang } = Astro.props;
 const { architecture } = project;
-const diagram = architecture && `/ascensores/architecture/${architecture.diagram}-${architecture.language ?? lang}`;
+const diagram = architecture && `${architecture.diagram}-${architecture.language ?? lang}`;
 const media: WorkMedia[] = [...(project.media ?? [])];
+const emphasis = project.emphasis ?? [];
+const escapeRegExp = (term: string) => term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const description = emphasis.length
+  ? project.description[lang].split(new RegExp(`\\b(${emphasis.map(escapeRegExp).join('|')})\\b`, 'g'))
+  : [project.description[lang]];
 
 if (architecture && diagram) {
   media.unshift({
     src: `${diagram}.png`,
     darkSrc: `${diagram}-dark.png`,
-    title: { es: 'Arquitectura en AWS', en: 'AWS architecture' },
+    title: architecture.title ?? { es: 'Arquitectura en AWS', en: 'AWS architecture' },
     htmlSrc: `${diagram}.html`,
     alt: architecture.alt,
     width: architecture.width,
@@ -29,89 +33,65 @@ if (architecture && diagram) {
 }
 ---
 
-<article id={project.id} class:list={['work-card scroll-mt-24', { 'has-media': media.length }]}
-  data-cover={project.cover} aria-labelledby={`${project.id}-title`}>
+<article id={project.id} class:list={['work-case-layout scroll-mt-24', { 'has-media': media.length }]}
+  aria-labelledby={`${project.id}-title`}>
+  <header class="work-case-heading">
+    <h3 class="portfolio-heading" id={`${project.id}-title`}>{project.title[lang]}</h3>
+    <p class="work-context">{company} <span aria-hidden="true">·</span> {project.type[lang]}</p>
+  </header>
   {media.length > 0 && (
-    <div class="work-card-media">
-      <div class="work-card-preview">
-        <WorkMediaGallery items={media} {lang} id={`${project.id}-media`} title={project.title[lang]} />
-
-      </div>
-      <WorkCommands commands={project.commands} {lang} />
+    <div class="work-case-media">
+      <WorkMediaGallery items={media} {lang} id={`${project.id}-media`} title={project.title[lang]} />
     </div>
   )}
-  <div class="work-card-content">
-    <header>
-      <h3 id={`${project.id}-title`}>{project.title[lang]}</h3>
-      <p class="work-context">{company} <span aria-hidden="true">·</span> {project.type[lang]}</p>
-    </header>
-    <div class="work-description">
-      <p>{project.description[lang]}</p>
-      {project.highlights && <WorkHighlights points={project.highlights} {lang} />}
-      {architecture?.description && <p class="mt-3">{architecture.description[lang]}</p>}
-    </div>
-    <footer>
-      <WorkTechnologies technologies={project.technologies} {lang} />
-    </footer>
+  <div class="work-case-notes">
+    <p class="work-description">{description.map((part, index) => index % 2 ? <strong>{part}</strong> : part)}</p>
+    {project.technologies.length > 0 && <WorkTechnologies technologies={project.technologies} {lang} iconsOnly />}
+    <WorkCommands command={project.command} {lang} />
   </div>
-  {!media.length && <WorkCommands commands={project.commands} {lang} />}
 </article>
 
 <style>
-  .work-card {
+  .work-case-layout {
     display: grid;
     align-items: start;
-    gap: clamp(1.25rem, 2.8vw, 2.5rem);
-    padding: clamp(1rem, 2.6vw, 2.25rem);
+    row-gap: clamp(1.25rem, 2.3vw, 2.25rem);
     min-width: 0;
-    border: 1px solid rgb(100 116 139 / .26);
-    border-radius: 1rem;
     color: #253140;
-    background: rgb(255 255 255 / .68);
-    backdrop-filter: blur(12px);
   }
 
-  :global(.dark) .work-card {
+  :global(.dark) .work-case-layout {
     color: #e0e7ef;
-    border-color: rgb(157 177 208 / .2);
-    background: rgb(27 37 55 / .73);
   }
 
-  /* Keep gallery controls in front of the outer Swiper wrapper for hit testing. */
-  :global(.swiper-coverflow) .work-card { transform: translateZ(1px); }
-
-  .work-card-content, .work-card-media, .work-card-preview { min-width: 0; }
-  .work-card-media { display: contents; }
-  .work-card-media > :global([data-work-commands]) { order: 1; }
-  .work-card h3 {
-    display: inline-block;
+  .work-case-heading, .work-case-media, .work-case-notes { min-width: 0; }
+  .work-case-heading h3 {
     margin: 0;
-    padding: .17em .36em;
-    margin-inline-start: -.36em;
-    border-radius: .45rem;
     color: #18263a;
-    background: color-mix(in srgb, var(--cover) 16%, transparent);
-    font-size: clamp(1.35rem, 2.35vw, 2.1rem);
-    font-weight: 700;
-    letter-spacing: -.025em;
-    line-height: 1.18;
-    text-wrap: balance;
+    font-size: clamp(1.65rem, 2.45vw, 2.55rem);
   }
 
-  :global(.dark) .work-card h3 {
+  :global(.dark) .work-case-heading h3 {
     color: #f1f5fb;
-    background: color-mix(in srgb, var(--cover) 20%, transparent);
   }
 
-  .work-context { margin-top: .55rem; color: #4e5c70; font-size: .875rem; line-height: 1.45; }
+  .work-context { margin-top: .85rem; color: #4e5c70; font-size: .875rem; line-height: 1.45; }
   :global(.dark) .work-context { color: #b3c1d4; }
   .work-context span { margin-inline: .25ch; }
-  .work-description { margin-top: .95rem; max-width: 68ch; line-height: 1.55; overflow-wrap: anywhere; }
-  .work-card footer { margin-top: .95rem; border-top: 1px solid rgb(100 116 139 / .26); }
+  .work-description { max-width: 42ch; line-height: 1.65; overflow-wrap: anywhere; }
+  .work-case-notes > :global(.cq-hero-terminal-cq) { margin-top: clamp(1.5rem, 4vw, 3.75rem); }
 
-  @media (min-width: 850px) {
-    .work-card.has-media { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); }
-    .work-card.has-media h3 { font-size: clamp(1.25rem, 1.85vw, 1.75rem); }
-    .work-card-media { display: grid; gap: 1rem; }
+  @media (min-width: 900px) {
+    .work-case-layout.has-media {
+      grid-template-columns: minmax(0, 2.35fr) minmax(0, 1fr);
+      grid-template-rows: auto 1fr;
+      grid-template-areas: "media heading" "media notes";
+      column-gap: clamp(2rem, 4vw, 4.5rem);
+      row-gap: 1.4rem;
+    }
+
+    .has-media .work-case-media { grid-area: media; }
+    .has-media .work-case-heading { grid-area: heading; }
+    .has-media .work-case-notes { grid-area: notes; }
   }
 </style>

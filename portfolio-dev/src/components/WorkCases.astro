@@ -1,6 +1,5 @@
 ---
 import 'swiper/css';
-import 'swiper/css/effect-coverflow';
 import { work } from '../work';
 import TitleSection from './TitleSection.astro';
 import WorkCaseCard from './WorkCaseCard.astro';
@@ -13,9 +12,9 @@ const companies = [...new Set(cases.map(project => project.company))]
   .sort((a, b) => Number(b === ascensores) - Number(a === ascensores));
 ---
 
-<section id="work-cases" data-section="work-cases" class="section work-showcase scroll-m-20">
+<section id="work-cases" data-section="work-cases" class="section portfolio-screen work-showcase">
   <div class="work-header">
-    <div class="work-heading container mx-auto max-w-6xl">
+    <div class="work-heading">
       <TitleSection className="!mb-0">{es ? 'Casos de trabajo' : 'Work case studies'}</TitleSection>
       <div class="work-controls" data-work-controls hidden>
         <div class="company-tabs" role="tablist" aria-label={es ? 'Empresa' : 'Company'}>
@@ -38,25 +37,34 @@ const companies = [...new Set(cases.map(project => project.company))]
     </div>
   </div>
 
-  {companies.map((company, index) => (
-    <div id={`work-panel-${index}`} data-work-panel>
-      <div class="swiper work-track" tabindex="0" role="group" aria-label={es ? `Casos de ${company}` : `Cases from ${company}`}>
-        <div class="swiper-wrapper">
-          {cases.filter(project => project.company === company).map(project => (
-            <div class="swiper-slide"><WorkCaseCard {project} {company} {lang} /></div>
-          ))}
+  <div class="work-panels">
+    {companies.map((company, index) => (
+      <div id={`work-panel-${index}`} data-work-panel>
+        <div class="swiper work-track" tabindex="0" role="group" aria-label={es ? `Casos de ${company}` : `Cases from ${company}`}>
+          <div class="swiper-wrapper">
+            {cases.filter(project => project.company === company).map(project => (
+              <div class="swiper-slide"><WorkCaseCard {project} {company} {lang} /></div>
+            ))}
+          </div>
         </div>
       </div>
-    </div>
-  ))}
+    ))}
+  </div>
 </section>
 
 <style>
-  .work-showcase {
+  .portfolio-screen.work-showcase {
+    --work-gutter: max(1.25rem, 4vw);
+    --work-width: min(calc(100% - 2 * var(--work-gutter)), 91rem);
     margin-inline: -1rem;
+    align-content: start;
   }
 
-  .work-header { padding-inline: 1rem; }
+  .work-header {
+    width: var(--work-width);
+    margin-inline: auto;
+    margin-bottom: clamp(2.25rem, 5vh, 4rem);
+  }
 
   .work-heading {
     display: grid;
@@ -67,6 +75,8 @@ const companies = [...new Set(cases.map(project => project.company))]
   .work-navigation, .company-tabs { display: flex; align-items: center; }
   .work-controls { display: contents; }
   .work-controls[hidden], [data-work-panel][hidden] { display: none; }
+  .work-panels { position: relative; overflow-anchor: none; }
+  [data-work-panel][data-leaving] { position: absolute; inset: 0 0 auto; pointer-events: none; }
   .company-tabs {
     justify-self: center;
     max-width: 100%;
@@ -83,6 +93,12 @@ const companies = [...new Set(cases.map(project => project.company))]
     border-radius: .5rem;
     font-size: .875rem;
     font-weight: 600;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .company-tabs button {
+      transition: background-color 150ms ease-out, color 150ms ease-out, box-shadow 150ms ease-out;
+    }
   }
 
   .company-tabs button[aria-selected='true'] { color: #202b3a; background: #fff; box-shadow: 0 1px 3px rgb(18 31 50 / .14); }
@@ -105,7 +121,9 @@ const companies = [...new Set(cases.map(project => project.company))]
   .work-showcase button:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
 
   .work-track {
-    padding-block: 1rem 1.5rem;
+    width: var(--work-width);
+    padding-block: .25rem 2.5rem;
+    padding-inline: .25rem;
   }
 
   .work-track:not(.swiper-initialized) {
@@ -113,18 +131,17 @@ const companies = [...new Set(cases.map(project => project.company))]
     scroll-snap-type: x mandatory;
   }
 
-  .work-track:not(.swiper-initialized) > .swiper-wrapper { gap: 1rem; padding-inline: 1rem; }
-  .work-track > .swiper-wrapper > .swiper-slide { height: auto; width: calc(100% - 2.5rem); scroll-snap-align: center; }
-  .work-track > .swiper-wrapper > .swiper-slide:only-child { width: calc(100% - 2rem); }
+  .work-track:not(.swiper-initialized) > .swiper-wrapper { gap: 1rem; }
+  .work-track > .swiper-wrapper > .swiper-slide { height: auto; width: 100%; scroll-snap-align: start; }
+  .work-track.swiper-fade > .swiper-wrapper > .swiper-slide {
+    pointer-events: none;
+    transition-property: opacity;
+  }
+  .work-track.swiper-fade > .swiper-wrapper > .swiper-slide-active { pointer-events: auto; }
   .work-track:focus-visible { outline: 2px solid currentColor; outline-offset: -2px; }
 
   @media (max-width: 480px) {
     .company-tabs button { padding-inline: .55rem; }
-  }
-
-  @media (min-width: 850px) {
-    .work-track > .swiper-wrapper > .swiper-slide { width: max(39rem, 57.4%); }
-    .work-track > .swiper-wrapper > .swiper-slide:only-child { width: min(max(39rem, 57.4%), 50.4rem); }
   }
 
   @media (min-width: 1024px) {
@@ -134,7 +151,7 @@ const companies = [...new Set(cases.map(project => project.company))]
 
 <script>
   import Swiper from 'swiper';
-  import { EffectCoverflow } from 'swiper/modules';
+  import { EffectFade } from 'swiper/modules';
 
   const showcase = document.querySelector<HTMLElement>('#work-cases');
   const controls = showcase?.querySelector<HTMLElement>('[data-work-controls]');
@@ -147,6 +164,7 @@ const companies = [...new Set(cases.map(project => project.company))]
   if (controls && previous && next && position && tabs.length) {
     const navigation = { previous, next, position };
     const carousels = new Map<number, Swiper>();
+    const panelMotion = new Map<HTMLElement, Animation>();
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     let company = 0;
 
@@ -161,13 +179,40 @@ const companies = [...new Set(cases.map(project => project.company))]
       navigation.next.disabled = count < 2;
     }
 
-    function select(index: number) {
+    function select(index: number, animate = false) {
+      const outgoing = company;
+      const crossfade = animate && !reduced && index !== outgoing;
       company = index;
       tabs.forEach((tab, i) => {
         const selected = i === index;
         tab.setAttribute('aria-selected', String(selected));
         tab.tabIndex = selected ? 0 : -1;
-        panels[i].hidden = !selected;
+        const panel = panels[i];
+        const leaving = crossfade && i === outgoing;
+        const entering = crossfade && selected;
+        const style = entering || leaving ? getComputedStyle(panel) : undefined;
+        const from = panel.hidden
+          ? { opacity: 0, transform: 'translateY(6px)' }
+          : { opacity: style?.opacity, transform: style?.transform };
+        panelMotion.get(panel)?.cancel();
+        panelMotion.delete(panel);
+        panel.hidden = !selected && !leaving;
+        panel.inert = !selected;
+        panel.toggleAttribute('data-leaving', leaving);
+
+        if (entering || leaving) {
+          const motion = panel.animate([from, {
+            opacity: entering ? 1 : 0,
+            transform: entering ? 'translateY(0)' : 'translateY(-4px)',
+          }], { duration: 240, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', fill: 'both' });
+          panelMotion.set(panel, motion);
+          motion.onfinish = () => {
+            panel.hidden = leaving;
+            panel.removeAttribute('data-leaving');
+            panelMotion.delete(panel);
+            motion.cancel();
+          };
+        }
       });
 
       const existing = carousels.get(index);
@@ -180,19 +225,15 @@ const companies = [...new Set(cases.map(project => project.company))]
       const track = panels[index].querySelector<HTMLElement>('.work-track')!;
       const multiple = track.querySelectorAll(':scope > .swiper-wrapper > .swiper-slide').length > 1;
       const carousel = new Swiper(track, {
-        modules: [EffectCoverflow],
-        effect: reduced ? 'slide' : 'coverflow',
-        speed: reduced ? 0 : 380,
-        slidesPerView: 'auto',
-        centeredSlides: true,
-        spaceBetween: 16,
+        modules: [EffectFade],
+        effect: 'fade',
+        speed: reduced ? 0 : 300,
+        fadeEffect: { crossFade: true },
         autoHeight: true,
         rewind: true,
         allowTouchMove: multiple,
         grabCursor: multiple,
-        slideToClickedSlide: true,
-        noSwipingSelector: '[data-work-media], [data-work-commands]',
-        coverflowEffect: { rotate: 17, depth: 120, stretch: 0, slideShadows: false },
+        noSwipingSelector: '[data-work-media], .cq-hero-terminal-cq',
         on: {
           init: sync,
           slideChange(swiper) {
@@ -222,7 +263,7 @@ const companies = [...new Set(cases.map(project => project.company))]
     }
 
     tabs.forEach((tab, index) => {
-      tab.addEventListener('click', () => select(index));
+      tab.addEventListener('click', event => select(index, event.detail > 0));
       tab.addEventListener('keydown', event => {
         const destinations: Record<string, number> = {
           ArrowLeft: (index + tabs.length - 1) % tabs.length,

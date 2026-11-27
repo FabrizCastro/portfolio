@@ -1,93 +1,125 @@
 ---
+import { HeroTerminal } from 'astro-component-kit/sections';
+import type { WorkCase } from '../work';
+
 interface Props {
-  commands: string[];
+  command: WorkCase['command'];
   lang: 'es' | 'en';
 }
 
-const { commands, lang } = Astro.props;
-const es = lang === 'es';
-const terminal = commands.length > 2;
-const label = es ? 'Comandos de ejemplo' : 'Example commands';
+const { command, lang } = Astro.props;
 ---
 
-<div class:list={['work-commands', { 'work-terminal': terminal }]} data-work-commands role="group" aria-label={label}>
-  <p class="commands-heading">
-    {terminal && <span class="terminal-lights" aria-hidden="true"><i></i><i></i><i></i></span>}
-    {terminal ? `Terminal · ${label}` : label}
-  </p>
-  <ul>
-    {commands.map(command => (
-      <li>
-        <span class="prompt" aria-hidden="true">$</span><code>{command}</code>
-        <button type="button" data-copy-command={command} aria-label={es ? `Copiar ${command}` : `Copy ${command}`} hidden>
-          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.75"
-            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2" /><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" /></svg>
-        </button>
-      </li>
-    ))}
-  </ul>
-  <p class="copy-status" role="status" data-copy-status></p>
-</div>
+<HeroTerminal
+  className="work-terminal"
+  title={command.label[lang]}
+  eyebrow=""
+  subtitle=""
+  primary={{ label: '', href: '' }}
+  command={command.text}
+  lines={[
+    { type: 'cmd', text: command.text },
+    { type: 'out', text: command.output },
+  ]}
+/>
 
-<style>
-  .work-commands {
-    --command-border: rgb(126 153 190 / .27);
-    --command-surface: #101827;
-    --command-ink: #e7edf7;
-    min-width: 0;
+<style is:global>
+  .work-case-notes .work-terminal {
+    padding: 0;
+    background: none;
   }
 
-  .commands-heading { margin-bottom: .45rem; font-size: .8125rem; font-weight: 600; }
-  .work-commands ul { display: grid; gap: .4rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr)); }
-  .work-commands li {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr) auto;
-    align-items: center;
-    gap: .6rem;
-    padding: .15rem .25rem .15rem .7rem;
+  .work-terminal .ht__inner {
+    grid-template-columns: minmax(0, 1fr);
+    gap: .75rem;
+  }
+
+  .work-terminal .ht__copy { display: contents; }
+
+  .work-terminal .ht__eyebrow,
+  .work-terminal .ht__subtitle,
+  .work-terminal .ht__btn,
+  .work-terminal .ht__cmd,
+  .work-terminal .ht__bar p,
+  .work-terminal .ht__line.ht__cursor {
+    display: none;
+  }
+
+  .work-terminal .ht__title {
+    margin: 0;
+    font-size: .8125rem;
+    font-weight: 600;
+    line-height: 1.45;
+    letter-spacing: normal;
+    color: inherit;
+    text-wrap: wrap;
+  }
+
+  .work-case-notes .work-terminal .ht__terminal {
+    grid-area: 2 / 1;
+    border: 1px solid rgb(130 153 189 / .28);
+    border-radius: .85rem;
+    background: #111a2b;
+    box-shadow: 0 20px 36px -17px rgb(14 26 51 / .55), 0 5px 14px -7px rgb(14 26 51 / .45);
+  }
+
+  .dark .work-case-notes .work-terminal .ht__terminal {
+    box-shadow: 0 25px 42px -18px rgb(0 0 0 / .86), 0 7px 15px -7px rgb(0 0 0 / .62);
+  }
+
+  .work-terminal .ht__install {
+    grid-area: 2 / 1;
+    place-self: start end;
+    z-index: 1;
+    padding: 0;
+    margin: 0 .25rem 0 0;
+    border: 0;
+    background: none;
+  }
+
+  .work-terminal .ht__copy-btn {
+    width: 2.75rem;
+    height: 2.75rem;
+    background: none;
+    color: #c3cfe2;
+  }
+
+  .work-terminal .ht__copy-btn:hover { background: #263750; }
+
+  .work-terminal .ht__bar {
     min-height: 2.75rem;
-    border: 1px solid var(--command-border);
-    border-radius: .5rem;
-    background: var(--command-surface);
-    color: var(--command-ink);
+    padding: .65rem .8rem;
   }
 
-  code, .prompt { font-size: .8125rem; line-height: 1.45; font-family: ui-monospace, Consolas, monospace; }
-  code { overflow-wrap: anywhere; }
-  .prompt { color: #e9ba53; }
-  button { display: grid; place-items: center; width: 2.75rem; height: 2.75rem; border-radius: .4rem; }
-  button[hidden] { display: none; }
-  button:hover { background: #263750; }
-  button:focus-visible { outline: 2px solid #9bcdff; outline-offset: -2px; }
-  .copy-status { margin-top: .35rem; font-size: .8125rem; }
-  .copy-status:empty { margin: 0; }
+  .work-case-notes .work-terminal .ht__bar span {
+    width: .45rem;
+    height: .45rem;
+    background: #667995;
+  }
 
-  .work-terminal { background: var(--command-surface); color: var(--command-ink); border: 1px solid var(--command-border); border-radius: .65rem; }
-  .work-terminal .commands-heading { display: flex; align-items: center; gap: .65rem; padding: .55rem .8rem; border-bottom: 1px solid var(--command-border); color: #c3cfe2; }
-  .terminal-lights { display: flex; gap: .25rem; }
-  .terminal-lights i { width: .4rem; height: .4rem; border-radius: 50%; background: #667995; }
-  .work-terminal ul { gap: 0; grid-template-columns: 1fr; }
-  .work-terminal li { border: 0; }
-  .work-terminal .copy-status:not(:empty) { padding: 0 .8rem .55rem; }
+  .work-terminal .ht__lines {
+    min-height: 0;
+    padding: .85rem 1rem 1rem;
+    font-size: .75rem;
+    line-height: 1.55;
+  }
+
+  .work-terminal .ht__line {
+    display: block;
+    overflow: visible;
+    overflow-wrap: anywhere;
+    white-space: normal;
+  }
+
+  .work-terminal .ht__prompt { margin-inline-end: .5em; }
+  .work-terminal .ht__line--cmd { color: #e7edf7; }
+  .work-terminal .ht__line--out { color: #aebcd0; }
 </style>
 
 <script>
-  const spanish = document.documentElement.lang === 'es';
+  const es = document.documentElement.lang === 'es';
 
-  document.querySelectorAll<HTMLElement>('[data-work-commands]').forEach(group => {
-    const status = group.querySelector('[data-copy-status]');
-    if (!status) return;
-
-    group.querySelectorAll<HTMLButtonElement>('[data-copy-command]').forEach(button => {
-      button.hidden = false;
-      button.addEventListener('click', async () => {
-        try {
-          await navigator.clipboard.writeText(button.dataset.copyCommand ?? '');
-          status.textContent = spanish ? 'Comando copiado' : 'Command copied';
-        } catch {
-          status.textContent = spanish ? 'Selecciona el comando para copiarlo' : 'Select the command to copy it';
-        }
-      });
-    });
+  document.querySelectorAll('.work-terminal').forEach(terminal => {
+    terminal.querySelector('.ht__copy-btn')?.setAttribute('aria-label', es ? 'Copiar comando' : 'Copy command');
   });
 </script>

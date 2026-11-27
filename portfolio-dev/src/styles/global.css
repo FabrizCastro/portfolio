@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+.portfolio-heading {
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -.035em;
+  text-wrap: balance;
+}
+
 :where([data-cover='orange']) { --cover: #b34015; --cover-ink: #fff; }
 :where([data-cover='yellow']) { --cover: #f4d15d; --cover-ink: #29200a; }
 :where([data-cover='blue']) { --cover: #2053a5; --cover-ink: #fff; }

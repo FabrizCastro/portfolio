@@ -16,7 +16,7 @@ const id = `${entries[0].id}-showcase`;
 
 <section class="project-showcase" data-project-showcase aria-labelledby={id}>
   <div class="showcase-heading">
-    <h3 id={id}>{es ? "Proyectos destacados" : "Featured projects"}</h3>
+    <h3 class="portfolio-heading" id={id}>{es ? "Proyectos destacados" : "Featured projects"}</h3>
     {entries.length > 1 && (
       <div class="showcase-nav">
         <button type="button" data-project-prev aria-label={es ? "Anterior" : "Previous"}>←</button>
@@ -55,7 +55,7 @@ const id = `${entries[0].id}-showcase`;
 <style>
   .project-showcase { margin-bottom: 2.75rem; }
   .showcase-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem; margin-bottom: 0.8rem; }
-  .showcase-heading h3 { font-size: 1.35rem; font-weight: 700; }
+  .showcase-heading h3 { font-size: clamp(1.35rem, 2.2vw, 1.9rem); }
   .showcase-nav { display: flex; align-items: center; gap: 0.65rem; font-size: 0.8rem; font-variant-numeric: tabular-nums; }
   .showcase-nav button, .dialog-controls button { min-width: 2.75rem; min-height: 2.75rem; border: 1px solid rgb(148 163 184 / 0.45); border-radius: 0.5rem; font-size: 1.25rem; }
   .showcase-nav button:hover, .dialog-controls button:hover { background: rgb(148 163 184 / 0.14); }
